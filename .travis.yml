@@ -22,4 +22,4 @@ env:
 
   global:
 
-    - CODECOV_TOKEN="338a3ff4-db44-4cdf-a496-95dabcb2a55c"
+    - CODECOV_TOKEN="ea9af717-3522-4a34-b655-15d2c11c0519"
