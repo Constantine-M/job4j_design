@@ -11,8 +11,8 @@ import java.util.NoSuchElementException;
  * одномерного массива.
  */
 public class BackwardArrayIt implements Iterator {
-    private final int[]  data;
-    private int point = 0;
+    private final int[] data;
+    private int point = 1;
 
     public BackwardArrayIt(int[] data) {
         this.data = data;
@@ -20,7 +20,7 @@ public class BackwardArrayIt implements Iterator {
 
     @Override
     public boolean hasNext() {
-        return point < data.length;
+        return point <= data.length;
     }
 
     /**
@@ -33,10 +33,9 @@ public class BackwardArrayIt implements Iterator {
      */
     @Override
     public Integer next() {
-        int lastEl = data.length - 1;
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        return data[lastEl - point++];
+        return data[data.length - point++];
     }
 }
