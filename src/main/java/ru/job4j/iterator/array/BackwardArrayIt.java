@@ -21,7 +21,7 @@ public class BackwardArrayIt implements Iterator {
 
     @Override
     public boolean hasNext() {
-        return data.length != 0 && point < data.length;
+        return data.length != 0 && point >= 0;
     }
 
     /**
