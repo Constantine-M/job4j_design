@@ -1,7 +1,7 @@
-package ru.job4j;
+package ru.job4j.iterator.array;
 
 import org.junit.Test;
-import ru.job4j.iterator.ArrayIt;
+import ru.job4j.iterator.array.ArrayIt;
 
 import java.util.NoSuchElementException;
 
