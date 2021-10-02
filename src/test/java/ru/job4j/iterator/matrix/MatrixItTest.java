@@ -118,6 +118,14 @@ public class MatrixItTest {
         in.next();
     }
 
+    @Test(expected = NoSuchElementException.class)
+    public void whenNoElementThenNext() {
+        MatrixIt in = new MatrixIt(
+                new int[][]{}
+        );
+        in.next();
+    }
+
     @Test
     public void whenMultiHashNext() {
         MatrixIt in = new MatrixIt(

@@ -8,8 +8,8 @@ import java.util.NoSuchElementException;
  */
 public class MatrixIt implements Iterator {
     private final int[][] data;
-    private int i = 0;
-    private int j = 0;
+    private int row = 0;
+    private int col = 0;
 
     public MatrixIt(int[][] data) {
         this.data = data;
@@ -18,25 +18,31 @@ public class MatrixIt implements Iterator {
     /**
      * Данный метод проверяет
      * наличие следующего элемента.
-     * 1.Проверяем, что ячейка не является
+     * 1.Проверяем, что нам не приходит
+     * массив длиной = 0.
+     * 2.Проверяем, что ячейка не является
      * последней в строке. Если является,
      * то переходим на новую строку.
      * Иначе мы бы возвращали пустую
      * строку (1 - пусто - пусто - 2).
-     * 2.Проверяем, что строка не пустая.
+     * 3.Проверяем, что строка не пустая.
      * Пустую пропускаем.
-     * @return true если далее есть элемент массива.
+     * @return true если далее есть
+     * элемент массива.
      */
     @Override
     public boolean hasNext() {
-        if (j == data[i].length) {
-            i++;
-            j = 0;
+        if (data.length == 0) {
+            return false;
         }
-        while (i <= data.length - 1 && data[i].length == 0) {
-            i++;
+        if (col == data[row].length) {
+            row++;
+            col = 0;
         }
-        return i < data.length && j <= data[i].length;
+        while (row <= data.length - 1 && data[row].length == 0) {
+            row++;
+        }
+        return row < data.length && col < data[row].length;
     }
 
     /**
@@ -50,6 +56,6 @@ public class MatrixIt implements Iterator {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        return data[i][j++];
+        return data[row][col++];
     }
 }
