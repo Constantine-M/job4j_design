@@ -23,14 +23,12 @@ public class EvenNumbersIterator implements Iterator {
      * в массиве и является четным.
      * Если последний или если нечетный,
      * то пропускаем.
-     * @return далее имеется четное число.
+     * @return true, если далее имеется
+     * четное число.
      */
     @Override
     public boolean hasNext() {
-        if (data.length == 0) {
-            return false;
-        }
-        while (index < data.length - 1 && data[index] % 2 != 0) {
+        while (data.length != 0 && index < data.length - 1 && data[index] % 2 != 0) {
             index++;
         }
         return index < data.length && data[index] % 2 == 0;
