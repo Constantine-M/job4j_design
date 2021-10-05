@@ -32,7 +32,7 @@ public class MatrixIt implements Iterator {
      */
     @Override
     public boolean hasNext() {
-        while (data.length != 0 && row <= data.length - 1 && data[row].length == column) {
+        while (data.length != row && data[row].length == column) {
             row++;
             column = 0;
         }
