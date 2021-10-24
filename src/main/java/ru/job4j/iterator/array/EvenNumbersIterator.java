@@ -1,6 +1,7 @@
 package ru.job4j.iterator.array;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * 5.1.2. Создать итератор четные числа.
@@ -41,10 +42,10 @@ public class EvenNumbersIterator implements Iterator {
      * @return четное число.
      */
     @Override
-    public Object next() {
-        if (hasNext()) {
-            return data[index++];
+    public Integer next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
         }
-        return null;
+        return data[index++];
     }
 }
