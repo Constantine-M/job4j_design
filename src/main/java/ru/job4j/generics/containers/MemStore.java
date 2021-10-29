@@ -22,35 +22,31 @@ public final class MemStore<T extends Base> implements Store<T> {
     /**
      * Данный метод добавляет объект в
      * хранилище (карту).
-     * Но что в нашем случае должно
-     * быть уникальным - id или сам объект?
      * @param model объект класса {@link Base}
      *              или его наследник.
      */
     @Override
     public void add(T model) {
-        if (!mem.containsKey(model.getId())) {
-            mem.put(model.getId(), model);
-        }
+        mem.put(model.getId(), model);
     }
 
     /**
      * Данный метод изменяет значение
      * (объект) по номеру id.
-     * В методе put уже происходит поиск
-     * ключа ({@code containsKey}).
-     * Если карта содержит такой ключ,
-     * то вставит новое значение вместо старого.
-     * id и модель - это то что должно быть в ячейке?
-     * Или по id ищем пару и в ней меняем одну
+     * По id ищем пару и в ней меняем одну
      * модель на другую?
      * @param id номер объекта.
      * @param model объект (предмет).
      */
     @Override
     public void replace(String id, T model) {
-        mem.put(id, model);
-    }
+
+        for (String key : mem.keySet()) {
+            if (key.equals(id)) {
+                mem.put(key, model);
+            }
+        }
+   }
 
     @Override
     public void delete(String id) {
@@ -60,18 +56,17 @@ public final class MemStore<T extends Base> implements Store<T> {
     /**
      * Данный метод находит значение (объект)
      * по ключу (id).
-     * Можно было бы (но это не точно)
-     * использовать метод containsKey.
      * @param id номер объекта.
      * @return объект в хранилище.
      */
     @Override
     public T findById(String id) {
+        T model = null;
         for (String key : mem.keySet()) {
             if (key.equals(id)) {
-                return mem.get(key);
+                model = mem.get(key);
             }
         }
-        return null;
+        return model;
     }
 }
