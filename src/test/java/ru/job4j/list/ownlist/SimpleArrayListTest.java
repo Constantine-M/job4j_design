@@ -2,7 +2,6 @@ package ru.job4j.list.ownlist;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ConcurrentModificationException;
@@ -87,21 +86,18 @@ public class SimpleArrayListTest {
         Assert.assertFalse(list.iterator().hasNext());
     }
 
-    @Ignore
     @Test(expected = NoSuchElementException.class)
     public void whenGetIteratorFromEmptyListThenNextThrowException() {
         list = new SimpleArrayList<>(5);
         list.iterator().next();
     }
 
-    @Ignore
     @Test
     public void whenGetIteratorTwiceThenStartAlwaysFromBeginning() {
         Assert.assertEquals(Integer.valueOf(1), list.iterator().next());
         Assert.assertEquals(Integer.valueOf(1), list.iterator().next());
     }
 
-    @Ignore
     @Test
     public void whenCheckIterator() {
         Iterator<Integer> iterator = list.iterator();
@@ -119,7 +115,6 @@ public class SimpleArrayListTest {
         IntStream.range(3, 10).forEach(v -> list.add(v));
     }
 
-    @Ignore
     @Test(expected = ConcurrentModificationException.class)
     public void whenAddAfterGetIteratorThenMustBeException() {
         Iterator<Integer> iterator = list.iterator();
@@ -127,7 +122,6 @@ public class SimpleArrayListTest {
         iterator.next();
     }
 
-    @Ignore
     @Test(expected = ConcurrentModificationException.class)
     public void whenRemoveAfterGetIteratorThenMustBeException() {
         Iterator<Integer> iterator = list.iterator();

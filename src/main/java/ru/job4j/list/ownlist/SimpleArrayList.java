@@ -1,8 +1,6 @@
 package ru.job4j.list.ownlist;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 1. Динамический список на массиве.
@@ -10,9 +8,7 @@ import java.util.Objects;
  */
 public class SimpleArrayList<T> implements List<T> {
 
-    private static final int DEFAULT_CAPACITY = 10;
-
-    private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+    private static final int DEFAULT_CAPACITY = 1;
 
     /**
      * Данное поле описывает массив,
@@ -49,8 +45,7 @@ public class SimpleArrayList<T> implements List<T> {
         if (size == container.length) {
             container = grow();
         }
-        container[size] = value;
-        size += 1;
+        container[size++] = value;
     }
 
     /**
@@ -69,8 +64,9 @@ public class SimpleArrayList<T> implements List<T> {
     @Override
     public T set(int index, T newValue) {
         Objects.checkIndex(index, size);
-        newValue = container[index];
-        return newValue;
+        T oldValue = container[index];
+        container[index] = newValue;
+        return oldValue;
     }
 
     /**
@@ -86,6 +82,7 @@ public class SimpleArrayList<T> implements List<T> {
      * в списке, то копируем массив,
      * перемещаем все элементы правее
      * на 1 ячейку влево.
+     *
      * 4.Последняя ячейка - та что мы
      * сместили в конец (та что удаляется)
      * должна быть стёрта (= null).
@@ -96,13 +93,13 @@ public class SimpleArrayList<T> implements List<T> {
     public T remove(int index) {
         modCount++;
         Objects.checkIndex(index, size);
-        final Object[] es = container;
-        T oldValue = (T) es[index];
-        final int newSize = size - 1;
-        if (newSize > index) {
+        final Object[] es = container; /* arraycopy не примет дженерик, поэтому создаем Object[]*/
+        T oldValue = (T) es[index]; /* сохраняем значение, находящееся в массиве по индексу index */
+        final int newSize = size - 1; /* выносим за скобки (чекстайл) */
+        if (newSize > index) { /* сдвиг элементы правее индекса на 1 поз влево */
             System.arraycopy(es, index + 1, es, index, newSize - index);
         }
-        size = newSize;
+        size = newSize; /* выносим за скобки (чекстайл) */
         es[size] = null;
         return oldValue;
     }
@@ -127,14 +124,54 @@ public class SimpleArrayList<T> implements List<T> {
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            @Override
-            public boolean hasNext() {
-                return false;
-            }
+
+            int expectedModCount = modCount;
+
+            /**
+             * Данная переменная позволяет
+             * передвигаться по списку.
+             */
+            int cursor;
 
             @Override
+            public boolean hasNext() {
+                return cursor != size;
+            }
+
+            /**
+             * Итератор запоминает значение
+             * счетчика (modCount) на момент
+             * своего создания (expectedModCount),
+             * а затем на каждой итерации
+             * сравнивает сохраненное значение,
+             * с текущим значением поля modCount.
+             *
+             * 1.Проверяем, чтобы на момент итерирования
+             * не была изменена коллекция,
+             * иначе выбрасываем исключение.
+             * Это называется fail-fast поведение.
+             *
+             * 2.Создаем счетчик для элементов
+             * списка, которые будем возвращать.
+             * Указатель {@code cursor} идет вперед,
+             * перемещаясь от элемента к элементу.
+             * А взвращать нам нужно текущие
+             * элементы списка, поэтому
+             * добавили переменную {@code i}.
+             *
+             * @return следующий элемент списка.
+             */
+            @Override
             public T next() {
-                return null;
+                if (modCount != expectedModCount) {
+                    throw new ConcurrentModificationException();
+                }
+                int i = cursor;
+                if (cursor >= size) {
+                    throw new NoSuchElementException();
+                }
+                cursor = i + 1;
+                return (T) container[i];
             }
         };
     }
@@ -145,21 +182,16 @@ public class SimpleArrayList<T> implements List<T> {
      * можно было хранить по крайне мере
      * кол-во элементов = минимальной
      * емкости.
-     *
-     * Наше временное хранилище парметризовано
-     * дженериком - не получается создать
-     * новый массив.
-     *
      * @return новый массив с увеличенной емкостью.
      */
     private T[] grow() {
         int oldCapacity = container.length;
-        if (oldCapacity > 0 || container != DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
+        if (oldCapacity == 0) {
+            container = (T[]) new Object[DEFAULT_CAPACITY];
+        } else {
             int newCapacity = oldCapacity * 2;
             container = Arrays.copyOf(container, newCapacity);
-        } else {
-            container = (T[]) new Object[DEFAULT_CAPACITY];
         }
-        return (T[]) container;
+        return container;
     }
 }
