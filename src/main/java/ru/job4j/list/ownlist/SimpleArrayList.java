@@ -75,17 +75,25 @@ public class SimpleArrayList<T> implements List<T> {
      * 1.Проверяем, что индекс находится
      * в пределах массива.
      *
-     * 2.Выносим некоторые переменные
-     * за скобки, потому Checkstyle ругается..
+     * 2.{@code T result = get(index)} -
+     * сохраняем значение, находящееся
+     * по индексу {@code index}.
      *
-     * 3.Если элемент не последний
-     * в списке, то копируем массив,
-     * перемещаем все элементы правее
-     * на 1 ячейку влево.
+     * 3.Копируем массив, перемещаем
+     * все элементы правее на 1 ячейку влево.
      *
      * 4.Последняя ячейка - та что мы
      * сместили в конец (та что удаляется)
      * должна быть стёрта (= null).
+     *
+     * Вариант ниже - упрощенный вариант
+     * для понимания работы метода.
+     * Единственное отличие от массива -
+     * это то, что метод возвращает дженерик,
+     * а не конкретное значение.
+     * Если нужно посложнее, то посмотри
+     * в классе {@link ArrayList}.
+     *
      * @param index индекс удаляемой яейки.
      * @return удаленный элемент.
      */
@@ -93,15 +101,11 @@ public class SimpleArrayList<T> implements List<T> {
     public T remove(int index) {
         modCount++;
         Objects.checkIndex(index, size);
-        final Object[] es = container; /* arraycopy не примет дженерик, поэтому создаем Object[]*/
-        T oldValue = (T) es[index]; /* сохраняем значение, находящееся в массиве по индексу index */
-        final int newSize = size - 1; /* выносим за скобки (чекстайл) */
-        if (newSize > index) { /* сдвиг элементы правее индекса на 1 поз влево */
-            System.arraycopy(es, index + 1, es, index, newSize - index);
-        }
-        size = newSize; /* выносим за скобки (чекстайл) */
-        es[size] = null;
-        return oldValue;
+        T result = get(index);
+        System.arraycopy(container, index + 1, container, index, container.length - index - 1);
+        container[container.length - 1] = null;
+        size--;
+        return result;
     }
 
     /**
