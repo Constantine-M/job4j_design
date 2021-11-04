@@ -1,4 +1,4 @@
-package ru.job4j.list.ownlist;
+package ru.job4j.list.arr;
 
 import java.util.*;
 

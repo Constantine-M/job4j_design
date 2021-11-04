@@ -1,4 +1,4 @@
-package ru.job4j.list.ownlist;
+package ru.job4j.list.arr;
 
 import org.junit.Assert;
 import org.junit.Before;
