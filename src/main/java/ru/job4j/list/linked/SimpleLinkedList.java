@@ -4,6 +4,8 @@ import java.util.*;
 
 /**
  * 2. Создать контейнер на базе связанного списка.
+ * 3. Удалить head в односвязном списке.
+ *
  * Данный класс описывает общую работу
  * связного списка.
  *
@@ -86,7 +88,47 @@ public class SimpleLinkedList<E> implements List<E> {
         for (int i = 0; i < index; i++) {
             node = node.next;
         }
-        return node.item;
+        return node.value;
+    }
+
+    /**
+     * Данный метод производит удаление
+     * первого элемента в списке.
+     *
+     * 1.Создаем 2 узла - первый и
+     * следующий. Важно, чтобы "голова"
+     * была не пустая, иначе выбрасываем
+     * {@link NoSuchElementException}.
+     *
+     * 2.Обнуляем значение ячейки.
+     * (согласно докам). В нашей версии
+     * мы этого не делаем.
+     *
+     * 3.Обнуляем ссылку на следующий
+     * элемент в списке. Так мы отцепляем
+     * узел от цепочки улов.
+     *
+     * 4.Назначаем первым элементом
+     * в цепочке {@code firstNode}
+     * следующий элемент после удаленного.
+     *
+     * @return первый элемент списка.
+     */
+    @Override
+    public E deleteFirst() {
+        Node<E> first = firstNode;
+        if (first == null) {
+            throw new NoSuchElementException();
+        }
+        Node<E> next = first.next;
+        first.next = null;
+        firstNode = next;
+        if (next == null) {
+            lastNode = null;
+        }
+        size--;
+        modCount++;
+        return first.value;
     }
 
     /**
@@ -167,17 +209,17 @@ public class SimpleLinkedList<E> implements List<E> {
                 lastReturned = next;
                 next = next.next;
                 cursor++;
-                return lastReturned.item;
+                return lastReturned.value;
             }
         };
     }
 
     private static class Node<E> {
-        E item;
+        E value;
         Node<E> next;
 
         Node(E element, Node<E> next) {
-            this.item = element;
+            this.value = element;
             this.next = next;
         }
     }

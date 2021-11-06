@@ -131,4 +131,28 @@ public class SimpleLinkedListTest {
         Assert.assertNull(list.get(0));
         Assert.assertNull(list.get(1));
     }
+
+    @Test(expected = NoSuchElementException.class)
+    public void whenDeleteFirst() {
+        List<Integer> list = new SimpleLinkedList<>();
+        list.add(1);
+        list.deleteFirst();
+        list.iterator().next();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void whenDeleteEmptyLinked() {
+        List<Integer> list = new SimpleLinkedList<>();
+        list.deleteFirst();
+    }
+
+    @Test
+    public void whenMultiDelete() {
+        List<Integer> list = new SimpleLinkedList<>();
+        list.add(1);
+        list.add(2);
+        assertThat(list.deleteFirst(), is(1));
+        Iterator<Integer> it = list.iterator();
+        assertThat(it.next(), is(2));
+    }
 }
