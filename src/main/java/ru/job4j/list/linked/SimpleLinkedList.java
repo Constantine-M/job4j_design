@@ -25,19 +25,19 @@ public class SimpleLinkedList<E> implements List<E> {
      * Данное поле описывает голову
      * связного списка.
      */
-    private Node<E> first;
+    private Node<E> firstNode;
 
     /**
      * Данноеполе описывает хвост
      * связного списка.
      */
-    private Node<E> last;
+    private Node<E> lastNode;
 
     /**
      * Данный метод добавляет узел в список.
      *
-     * С одной нодой (first) не прокатило -
-     * добавляю вторую ноду (last).
+     * С одной нодой (firstNode) не прокатило -
+     * добавляю вторую ноду (lastNode).
      * Иначе наталкиваемся на NPE.
      *
      * 1.Если узел первый и единственный (null),
@@ -54,13 +54,13 @@ public class SimpleLinkedList<E> implements List<E> {
      */
     @Override
     public void add(E element) {
-        Node<E> l = last;
+        Node<E> last = lastNode;
         Node<E> newNode = new Node<>(element, null);
-        last = newNode;
-        if (l == null) {
-            first = newNode;
+        lastNode = newNode;
+        if (last == null) {
+            firstNode = newNode;
         } else {
-            l.next = newNode;
+            last.next = newNode;
         }
         size++;
         modCount++;
@@ -82,11 +82,11 @@ public class SimpleLinkedList<E> implements List<E> {
     @Override
     public E get(int index) {
         Objects.checkIndex(index, size);
-        Node<E> x = first;
+        Node<E> node = firstNode;
         for (int i = 0; i < index; i++) {
-            x = x.next;
+            node = node.next;
         }
-        return x.item;
+        return node.item;
     }
 
     /**
@@ -105,13 +105,13 @@ public class SimpleLinkedList<E> implements List<E> {
              * Элемент, который вернули последним...
              * вернули в текущей итерации.
              */
-            private Node<E> lastReturned = first;
+            private Node<E> lastReturned = firstNode;
 
             /**
              * Элемент, который будет возвращен
              * в следующей итерации.
              */
-            private Node<E> next = first;
+            private Node<E> next = firstNode;
 
             /**
              * Данное поле описывает указатель,
