@@ -91,6 +91,37 @@ public class SimpleLinkedList<E> implements List<E> {
         return node.value;
     }
 
+
+    /**
+     * Данный метод добавляет элемент
+     * в начало списка.
+     *
+     * 1.Содаем 2 узла - первый узел и
+     * узел, который будет добавлять в
+     * начало. Он будет содержать в себе
+     * значение {@code element} и
+     * ссылку на узел, который является
+     * первым (head) сейчас.
+     *
+     * 2.Производим перелинковку.
+     * Первым узлом назначаем новый узел.
+     *
+     * 3.Если добавляемый элемент
+     * единственный, то последний элемент
+     * также назначаем первым.
+     */
+    @Override
+    public void addFirst(E element) {
+        Node<E> first = firstNode;
+        Node<E> newNode = new Node<>(element, first);
+        firstNode = newNode;
+        if (first == null) {
+            lastNode = newNode;
+        }
+        size++;
+        modCount++;
+    }
+
     /**
      * Данный метод производит удаление
      * первого элемента в списке.

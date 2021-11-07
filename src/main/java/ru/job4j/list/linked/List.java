@@ -11,5 +11,7 @@ public interface List<E> extends Iterable<E> {
 
     E get(int index);
 
+    void addFirst(E value);
+
     E deleteFirst();
 }
