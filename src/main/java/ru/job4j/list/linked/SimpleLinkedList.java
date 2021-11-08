@@ -109,15 +109,17 @@ public class SimpleLinkedList<E> implements List<E> {
      * 3.Если добавляемый элемент
      * единственный, то последний элемент
      * также назначаем первым.
+     *
+     * Но можно сделать еще проще.
+     * Во время присваивания переменной
+     * {@code firstNode} нового значения,
+     * у нас все еще хранится значение старое.
+     * Его мы как раз записываем в
+     * поле {@code next}.
      */
     @Override
     public void addFirst(E element) {
-        Node<E> first = firstNode;
-        Node<E> newNode = new Node<>(element, first);
-        firstNode = newNode;
-        if (first == null) {
-            lastNode = newNode;
-        }
+        firstNode = new Node<>(element, firstNode);
         size++;
         modCount++;
     }
