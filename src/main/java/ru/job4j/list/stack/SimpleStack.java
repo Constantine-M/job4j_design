@@ -39,4 +39,8 @@ public class SimpleStack<E> {
     public void push(E element) {
         linked.addFirst(element);
     }
+
+    public int size() {
+        return linked.size();
+    }
 }

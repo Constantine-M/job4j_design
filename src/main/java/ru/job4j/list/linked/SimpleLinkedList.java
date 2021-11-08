@@ -91,6 +91,9 @@ public class SimpleLinkedList<E> implements List<E> {
         return node.value;
     }
 
+    public int size() {
+        return size;
+    }
 
     /**
      * Данный метод добавляет элемент
