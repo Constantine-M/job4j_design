@@ -2,6 +2,8 @@ package ru.job4j.list.queue;
 
 import ru.job4j.list.stack.SimpleStack;
 
+import java.util.NoSuchElementException;
+
 /**
  * 5. Очередь на двух стеках.
  *
@@ -39,6 +41,9 @@ public class SimpleQueue<E> {
      * @return первое значение.
      */
     public E poll() {
+        if (out.size() == 0 && in.size() == 0) {
+            throw new NoSuchElementException();
+        }
         if (out.size() == 0) {
             while (in.size() > 0) {
                 out.push(in.pop());
