@@ -19,16 +19,27 @@ import java.util.function.Predicate;
  */
 public class ListUtils {
 
+    /**
+     * Данный метод добавляет элемент в список
+     * перед указанным индексом.
+     *
+     * Благодаря конструктору
+     * {@link List#listIterator(int index)}
+     * мы возвращаем значение итератора,
+     * начиная с {@code index}.
+     *
+     * Когда вставляем элемент по
+     * данному индексу, остальные
+     * элементы сдвигаются вправо.
+     *
+     * @param list редактируемый список.
+     * @param index индекс ячейки.
+     * @param value вставляемое значение.
+     */
     public static <T> void addBefore(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        ListIterator<T> i = list.listIterator();
-        while (i.hasNext()) {
-            if (i.nextIndex() == index) {
-                i.add(value);
-                break;
-            }
-            i.next();
-        }
+        ListIterator<T> iterator = list.listIterator(index);
+        iterator.add(value);
     }
 
     /**
@@ -41,14 +52,8 @@ public class ListUtils {
      */
     public static <T> void addAfter(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        ListIterator<T> i = list.listIterator(list.size());
-        while (i.hasPrevious()) {
-            if (i.previousIndex() == index) {
-                i.add(value);
-                break;
-            }
-            i.previous();
-        }
+        ListIterator<T> iterator = list.listIterator(index + 1);
+        iterator.add(value);
     }
 
     /**
