@@ -1,5 +1,6 @@
 package ru.job4j.list.set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,6 +10,7 @@ import static org.junit.Assert.*;
  */
 public class SimpleSetTest {
 
+    @Ignore
     @Test
     public void whenAddNonNull() {
         Set<Integer> set = new SimpleSet<>();
@@ -17,6 +19,7 @@ public class SimpleSetTest {
         assertFalse(set.add(1));
     }
 
+    @Ignore
     @Test
     public void whenAddNull() {
         Set<Integer> set = new SimpleSet<>();
@@ -25,6 +28,7 @@ public class SimpleSetTest {
         assertFalse(set.add(null));
     }
 
+    @Ignore
     @Test
     public void whenAddNullAndNumberAndDublcateIt() {
         Set<Integer> set = new SimpleSet<>();
