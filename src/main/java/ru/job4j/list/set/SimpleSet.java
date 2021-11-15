@@ -20,27 +20,27 @@ public class SimpleSet<T> implements Set<T> {
 
     @Override
     public boolean add(T value) {
+        boolean rsl = false;
         if (!contains(value)) {
             set.add(value);
-            return true;
+            rsl = true;
         }
-        return false;
+        return rsl;
     }
 
     @Override
     public boolean contains(T value) {
         boolean rsl = false;
-        Iterator<T> it = set.iterator();
         if (value == null) {
-            while (it.hasNext()) {
-                if (it.next() == null) {
+            for (int i = 0; i < set.size(); i++) {
+                if (set.get(i) == null) {
                     rsl = true;
                     break;
                 }
             }
         } else {
-            while (it.hasNext()) {
-                if (value.equals(it.next())) {
+            for (int i = 0; i < set.size(); i++) {
+                if (value.equals(set.get(i))) {
                     rsl = true;
                     break;
                 }
