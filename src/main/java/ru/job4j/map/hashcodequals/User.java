@@ -1,4 +1,4 @@
-package ru.job4j.map;
+package ru.job4j.map.hashcodequals;
 
 import java.util.*;
 
@@ -166,7 +166,7 @@ public class User {
      * в тот же самый бакет.
      */
     public static void main(String[] args) {
-        User first = new User("Consta", 0, new GregorianCalendar(1995, Calendar.MARCH, 6));
+        /*User first = new User("Consta", 0, new GregorianCalendar(1995, Calendar.MARCH, 6));
         User second = new User("Consta", 0, new GregorianCalendar(1995, Calendar.MARCH, 6));
         Map<User, Object> map = new HashMap<>();
         map.put(first, new Object());
@@ -174,6 +174,7 @@ public class User {
         for (Map.Entry<User, Object> entry : map.entrySet()) {
             System.out.println(entry.getKey().hashCode() + " <- key : value -> " + entry.getValue());
         }
-        System.out.println("Вызов метода equals()  - " + first.equals(second));
+        System.out.println("Вызов метода equals()  - " + first.equals(second));*/
+        System.out.println("Делаем свою мапу - этот код закрываю.");
     }
 }
