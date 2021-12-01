@@ -17,6 +17,8 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     private int modCount = 0;
 
+    private int threshold;
+
     private MapEntry<K, V>[] table = new MapEntry[capacity];
 
     @Override
@@ -35,7 +37,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
     private int hash(int hashCode) {
         int square = hashCode * hashCode;
         int middle = (square % 1000000) / 100;
-        return middle;
+        return middle >> 2;
     }
 
     private int indexFor(int hash) {
@@ -43,7 +45,27 @@ public class SimpleMap<K, V> implements Map<K, V> {
     }
 
     private void expand() {
-
+        MapEntry<K, V>[] oldTab = table;
+        int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        int newCap = 0;
+        int oldThr = 0;
+        int newThr = 0;
+        if (oldCap > 0) {
+            newThr = oldThr;
+        } else if (oldThr > 0) {
+            newCap = oldThr;
+        } else {
+            newCap = capacity;
+            newThr = capacity * (int) LOAD_FACTOR;
+        }
+        threshold = newThr;
+        MapEntry<K, V>[] newTab = new MapEntry[newCap];
+        if (oldTab != null) {
+            for (int i = 0; i < oldCap; i++) {
+                newTab[i] = oldTab[i];
+            }
+        }
+        table = newTab;
     }
 
     @Override
