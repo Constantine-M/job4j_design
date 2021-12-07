@@ -1,7 +1,6 @@
 package ru.job4j.map.mymap;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ConcurrentModificationException;
@@ -44,7 +43,6 @@ public class SimpleMapTest {
         Assert.assertEquals("tequila", map.get(3));
     }
 
-    @Ignore
     @Test
     public void whenAddNullThenGet() {
         Map<Integer, String> map = new SimpleMap<>();

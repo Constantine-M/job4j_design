@@ -15,8 +15,6 @@ public class SimpleMap<K, V> implements Map<K, V> {
 
     private int capacity = 8;
 
-    private int count = 0;
-
     private int modCount = 0;
 
     /**
@@ -50,7 +48,10 @@ public class SimpleMap<K, V> implements Map<K, V> {
     @Override
     public boolean put(K key, V value) {
         boolean rsl;
-        int index = indexFor(hash(key.hashCode()));
+        int index = 0;
+        if (key != null) {
+            index = indexFor(hash(key.hashCode()));
+        }
         expand();
         if ((table[index]) == null) {
             table[index] = new MapEntry(key, value);
@@ -138,7 +139,10 @@ public class SimpleMap<K, V> implements Map<K, V> {
      */
     @Override
     public V get(K key) {
-        int index = indexFor(hash(key.hashCode()));
+        int index = 0;
+        if (key != null) {
+            index = indexFor(hash(key.hashCode()));
+        }
         MapEntry<K, V> element;
         if (table[index] != null) {
             element = table[index];
