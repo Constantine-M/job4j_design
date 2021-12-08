@@ -51,6 +51,13 @@ public class SimpleMapTest {
     }
 
     @Test
+    public void whenRemoveValueByNullKey() {
+        Map<Integer, String> map = new SimpleMap<>();
+        map.put(null, "chardonnay");
+        assertTrue(map.remove(null));
+    }
+
+    @Test
     public void whenGetByIncorrectKeyThenReturnNull() {
         Map<Integer, String> map = new SimpleMap<>();
         map.put(1, "liquor");
