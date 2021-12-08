@@ -114,7 +114,6 @@ public class SimpleMap<K, V> implements Map<K, V> {
      * 2 раза.
      */
     private void expand() {
-//        int threshold = (int) (LOAD_FACTOR * capacity);
         int newCap = 0;
         if (size >= (int) (LOAD_FACTOR * capacity)) {
             newCap = capacity * 2;
