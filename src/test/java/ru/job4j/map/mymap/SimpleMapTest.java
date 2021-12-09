@@ -28,6 +28,19 @@ public class SimpleMapTest {
     }
 
     @Test
+    public void whenPutWithNullKeyThenSizeIncrease() {
+        Map<Integer, String> map = new SimpleMap<>();
+        map.put(null, "rum");
+        map.put(1, "whisky");
+        map.put(2, "tequila");
+        map.put(3, "wine");
+        map.put(4, "cognac");
+        map.put(5, "champagne");
+        map.put(6, "scotch");
+        Assert.assertEquals(7, map.size());
+    }
+
+    @Test
     public void whenPutToTheSameIndexThenFalse() {
         Map<Integer, String> map = new SimpleMap<>();
         map.put(2, "whisky");

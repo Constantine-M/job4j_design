@@ -3,6 +3,7 @@ package ru.job4j.map.mymap;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * 8. Реализовать собственную структуру данных - HashMap.
@@ -68,8 +69,7 @@ public class SimpleMap<K, V> implements Map<K, V> {
      * Данный метод находит хэш значение
      * определенного объекта.
      *
-     * @param hashCode хэшкод, который
-     *                 похоже, указываем сами.
+     * @param hashCode хэшкод ключа.
      * @return хэш значение.
      */
     private int hash(int hashCode) {
@@ -112,14 +112,33 @@ public class SimpleMap<K, V> implements Map<K, V> {
      * значения {@code threshold},
      * то увеличивем емкость карты в
      * 2 раза.
+     *
+     * 1.Берем элемент из старой таблицы.
+     * Достаем из него ключ.
+     * 2.Рассчитываем по этому ключу
+     * новый индекс для новой таблицы.
+     * 3.Помещаем элемент в новую
+     * таблицу.
+     *
+     * Это есть рехеширование.
      */
     private void expand() {
         int newCap = 0;
         if (size >= (int) (LOAD_FACTOR * capacity)) {
             newCap = capacity * 2;
             MapEntry<K, V>[] newTab = new MapEntry[newCap];
+            MapEntry<K, V> temp;
+            int index;
             for (int i = 0; i < capacity; i++) {
-                newTab[i] = table[i];
+                if (table[i] != null) {
+                    temp = table[i];
+                    if (temp.key == null) {
+                        index = 0;
+                    } else {
+                        index = indexFor(hash(temp.key.hashCode()));
+                    }
+                    newTab[index] = temp;
+                }
             }
             capacity = newCap;
             table = newTab;
@@ -138,15 +157,11 @@ public class SimpleMap<K, V> implements Map<K, V> {
      */
     @Override
     public V get(K key) {
-        MapEntry<K, V> element;
         int index = 0;
         if (key != null) {
             index = indexFor(hash(key.hashCode()));
-            if (table[index] != null && table[index].key.equals(key)) {
-                element = table[index];
-                return element.value;
-            }
-        } else {
+        }
+        if (table[index] != null && Objects.equals(table[index].key, key)) {
             return table[index].value;
         }
         return null;
@@ -170,13 +185,8 @@ public class SimpleMap<K, V> implements Map<K, V> {
         int index = 0;
         if (key != null) {
             index = indexFor(hash(key.hashCode()));
-            if (table[index] != null && table[index].key.equals(key)) {
-                table[index] = null;
-                size--;
-                modCount++;
-                rsl = true;
-            }
-        } else {
+        }
+        if (table[index] != null && Objects.equals(table[index].key, key)) {
             table[index] = null;
             size--;
             modCount++;
@@ -217,19 +227,13 @@ public class SimpleMap<K, V> implements Map<K, V> {
              */
             @Override
             public boolean hasNext() {
-                boolean rsl = false;
                 if (modCount != expectedModCount) {
                     throw new ConcurrentModificationException();
                 }
-                while (cursor < table.length) {
-                    if (table[cursor] == null) {
-                        cursor++;
-                    } else {
-                        rsl = true;
-                        break;
-                    }
+                while (table.length != cursor && table[cursor] == null) {
+                    cursor++;
                 }
-                return rsl;
+                return cursor < table.length;
             }
 
             @Override
