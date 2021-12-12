@@ -1,6 +1,7 @@
 package ru.job4j.tree;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * 1. Создать элементарную структуру дерева.
@@ -12,6 +13,36 @@ public class SimpleTree<E> implements Tree<E> {
 
     public SimpleTree(final E root) {
         this.root = new Node<>(root);
+    }
+
+    /**
+     * Данный метод возвращает Optional<Node>,
+     * а не Node<E>. В итоге пока что не ясно,
+     * где следует поправить.
+     * Где-то нам нужно из простого узла
+     * вернуть в итоге узел конкретного типа
+     * Node<E>.
+     * @param condition
+     * @return
+     */
+    private Optional<Node> findByPredicate(Predicate<Node<E>> condition) {
+        Optional<Node> rsl = Optional.empty();
+        Queue<Node<E>> data = new LinkedList<>();
+        data.offer(this.root);
+        while (!data.isEmpty()) {
+            Node<E> el = data.poll();
+            if (condition.test(el)) {
+                rsl = Optional.of(el);
+                break;
+            }
+            data.addAll(el.children);
+        }
+        return rsl;
+    }
+
+    public boolean isBinary() {
+        Predicate<Node<E>> pred = E -> E.children.size() > 2;
+        return findByPredicate(pred).isEmpty();
     }
 
     /**
@@ -42,19 +73,26 @@ public class SimpleTree<E> implements Tree<E> {
 
     @Override
     public Optional<Node<E>> findBy(E value) {
-        Optional<Node<E>> rsl = Optional.empty();
-        Queue<Node<E>> data = new LinkedList<>();
-        data.offer(this.root);
-        while (!data.isEmpty()) {
-            Node<E> el = data.poll();
-            if (el.value.equals(value)) {
-                rsl = Optional.of(el);
-                break;
-            }
-            data.addAll(el.children);
-        }
-        return rsl;
+        return Optional.empty();
     }
+
+   /* @Override
+    public Optional<Node<E>> findBy(E value) {
+        Predicate<Node<E>> pred = E -> E.value.equals(value);
+        return findByPredicate(pred);
+//        Optional<Node<E>> rsl = Optional.empty();
+//        Queue<Node<E>> data = new LinkedList<>();
+//        data.offer(this.root);
+//        while (!data.isEmpty()) {
+//            Node<E> el = data.poll();
+//            if (el.value.equals(value)) {
+//                rsl = Optional.of(el);
+//                break;
+//            }
+//            data.addAll(el.children);
+//        }
+//        return rsl;
+    }*/
 
     @Override
     public boolean equals(Object o) {
