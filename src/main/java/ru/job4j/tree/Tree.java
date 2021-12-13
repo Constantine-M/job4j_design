@@ -18,6 +18,8 @@ public interface Tree<E> {
 
     Optional<Node<E>> findBy(E value);
 
+    boolean isBinary();
+
     /**
      * Данный класс описывает узел
      * дерева. Узел содержит значение

@@ -16,17 +16,48 @@ public class SimpleTree<E> implements Tree<E> {
     }
 
     /**
-     * Данный метод возвращает Optional<Node>,
-     * а не Node<E>. В итоге пока что не ясно,
-     * где следует поправить.
-     * Где-то нам нужно из простого узла
-     * вернуть в итоге узел конкретного типа
-     * Node<E>.
-     * @param condition
-     * @return
+     * Данный метод представляет из себя
+     * шаблон. Шаблон проходит дерево
+     * в ширину.
+     *
+     * В шаблоне можно изменять условие,
+     * которое выполняется или нет в
+     * процессе прохождения по дереву.
+     *
+     * Коротко, прохождение в ширину
+     * заключается в обходе дерева по
+     * уровням.
+     *
+     * 1.Каждый уровень, начиная с
+     * {@code root} элемента, представляет
+     * из себя связный список.
+     *
+     * 2.Добавляем элементы связного
+     * списка в очередь.
+     *
+     * 3.Начинаем обход этого списка
+     * согласно очереди.
+     *
+     * 4.Пока очередь не опустела,
+     * извлекаем элемент и проверяем
+     * наше условие.
+     *
+     * 5.Если условие выполняется, то
+     * возвращаем наш узел.
+     *
+     * 6.Если условие не выполняет, а
+     * очередь заканчивается, то
+     * переходим на уровень ниже,
+     * добавляя всех детей всех элементов
+     * очереди (предыдущей) и проходим
+     * по новой очередт снова.
+     *
+     * @param condition условие возврата
+     *                  узла из очереди.
+     * @return узел связного списка из очереди.
      */
-    private Optional<Node> findByPredicate(Predicate<Node<E>> condition) {
-        Optional<Node> rsl = Optional.empty();
+    private Optional<Node<E>> findByPredicate(Predicate<Node<E>> condition) {
+        Optional<Node<E>> rsl = Optional.empty();
         Queue<Node<E>> data = new LinkedList<>();
         data.offer(this.root);
         while (!data.isEmpty()) {
@@ -40,6 +71,31 @@ public class SimpleTree<E> implements Tree<E> {
         return rsl;
     }
 
+    /**
+     * Данный метод проверяет, что
+     * дерево бинарное.
+     *
+     * Предикат построен таким образом, что
+     * если у элемента больше 2 детей,
+     * то функция {@code findByPredicate}
+     * вернет этот узел (элемент).
+     *
+     * Это будет означать, что дерево
+     * не бинарное.
+     *
+     * Если вернет {@code null} в обертке
+     * {@link Optional} - соотв-но
+     * дерево бинарное (потому что
+     * не были найдены узлы, где больше
+     * 2 потомков).
+     *
+     * Отсюда, чтобы проверить, что
+     * дерево бинарное, нужно проверить,
+     * что метод вернет пустоту (а не узел).
+     *
+     * @return true, если дерево бинарное.
+     */
+    @Override
     public boolean isBinary() {
         Predicate<Node<E>> pred = E -> E.children.size() > 2;
         return findByPredicate(pred).isEmpty();
@@ -73,27 +129,9 @@ public class SimpleTree<E> implements Tree<E> {
 
     @Override
     public Optional<Node<E>> findBy(E value) {
-        return Optional.empty();
-    }
-
-   /* @Override
-    public Optional<Node<E>> findBy(E value) {
         Predicate<Node<E>> pred = E -> E.value.equals(value);
         return findByPredicate(pred);
-        System.out.println("-------------------------");
-        Optional<Node<E>> rsl = Optional.empty();
-        Queue<Node<E>> data = new LinkedList<>();
-        data.offer(this.root);
-        while (!data.isEmpty()) {
-            Node<E> el = data.poll();
-            if (el.value.equals(value)) {
-                rsl = Optional.of(el);
-                break;
-            }
-            data.addAll(el.children);
-        }
-        return rsl;
-    }*/
+    }
 
     @Override
     public boolean equals(Object o) {
