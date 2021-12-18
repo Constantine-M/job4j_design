@@ -13,7 +13,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class AnalizeTest {
 
-    @Ignore
     @Test
     public void whenNotChanged() {
         User u1 = new User(1, "A");
@@ -27,7 +26,6 @@ public class AnalizeTest {
         );
     }
 
-    @Ignore
     @Test
     public void whenOneChanged() {
         User u1 = new User(1, "A");
@@ -55,7 +53,6 @@ public class AnalizeTest {
         );
     }
 
-    @Ignore
     @Test
     public void whenOneAdded() {
         User u1 = new User(1, "A");

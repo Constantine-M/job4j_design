@@ -16,8 +16,40 @@ import java.util.stream.Collectors;
 public class Analize {
 
     public static Info diff(Set<User> previous, Set<User> current) {
+        int deleted = 0;
+        int changed = 0;
+        int added = 0;
         Map<Integer, String> map = previous.stream()
                 .collect(Collectors.toMap(User::getId, User::getName, (x, y) -> x, LinkedHashMap::new));
+        for (User user : current) {
+            if (map.get(user.getId()) != null && !user.getName().equals(map.get(user.getId()))) {
+                changed++;
+            } else  if (map.get(user.getId()) == null) {
+                added++;
+            }
+        }
+        /*for (Map.Entry entry : map.entrySet()) {
+            if (current.contains(entry.getKey())) {
+
+            }
+        }*/
+        /*if (map.size() > current.size()) {
+            deleted = map.size() - current.size();
+        } else {
+            added = current.size() - map.size();
+        }*/
+        /*Map<Integer, User> map = new LinkedHashMap<>();
+        int i = 0;
+        for (User users : previous) {
+            map.put(i, users);
+        }
+        for (User user : previous) {
+            for (int j = 0; j < current.size(); j++) {
+                if (!current.contains(user)) {
+                    deleted++;
+                }
+            }
+        }*/
         /*while (current.iterator().hasNext()) {
             if(current.contains(map.))
         }*/
@@ -26,6 +58,6 @@ public class Analize {
 
             }
         }*/
-        return null;
+        return new Info(added, changed, deleted);
     }
 }
