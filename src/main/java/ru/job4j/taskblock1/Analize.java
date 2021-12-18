@@ -1,6 +1,5 @@
 package ru.job4j.taskblock1;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,6 +10,30 @@ import java.util.stream.Collectors;
  * Данный класс анализирует начальное
  * и измененное состояние множества.
  *
+ * Чтобы обеспечить сложность O(n),
+ * использовали {@link java.util.HashMap}.
+ *
+ * 1.Выбираем любой список и преобразуем
+ * его в карту.
+ * 2.Если первый список - это карта, то
+ * проходиться циклом будем по второму
+ * списку. Один единственный цикл в
+ * программе как раз дает нам O(n).
+ * Будь их 2 - сложность была бы n^2.
+ * 3.В цикле проверяем - если в previous
+ * (наша карта) объект с ID из текущего
+ * списка {@code user.getId} находится -
+ * значит эти идентификаторы есть в обоих
+ * списках. Далее проверяем, что если
+ * имена не совпадают, то ячейку изменяли (имя).
+ * 4.Во втором условии проверяем, что если
+ * в предыдущем списке объект с ID не
+ * находится, то его добавили.
+ * 5.Кол-во удаленных элементов
+ * находим арифметически: размер списка
+ * предыдущ - размер списка текущ +
+ * добавленные элементы.
+ *
  * @author Constantine on 13.12.2021
  */
 public class Analize {
@@ -19,45 +42,15 @@ public class Analize {
         int deleted = 0;
         int changed = 0;
         int added = 0;
-        Map<Integer, String> map = previous.stream()
-                .collect(Collectors.toMap(User::getId, User::getName, (x, y) -> x, LinkedHashMap::new));
+        Map<Integer, String> map = previous.stream().collect(Collectors.toMap(User::getId, User::getName));
         for (User user : current) {
             if (map.get(user.getId()) != null && !user.getName().equals(map.get(user.getId()))) {
                 changed++;
             } else  if (map.get(user.getId()) == null) {
                 added++;
             }
+            deleted = map.size() - current.size() + added;
         }
-        /*for (Map.Entry entry : map.entrySet()) {
-            if (current.contains(entry.getKey())) {
-
-            }
-        }*/
-        /*if (map.size() > current.size()) {
-            deleted = map.size() - current.size();
-        } else {
-            added = current.size() - map.size();
-        }*/
-        /*Map<Integer, User> map = new LinkedHashMap<>();
-        int i = 0;
-        for (User users : previous) {
-            map.put(i, users);
-        }
-        for (User user : previous) {
-            for (int j = 0; j < current.size(); j++) {
-                if (!current.contains(user)) {
-                    deleted++;
-                }
-            }
-        }*/
-        /*while (current.iterator().hasNext()) {
-            if(current.contains(map.))
-        }*/
-        /*for (int i = 0; i < current.size(); i++) {
-            if (current.contains()) {
-
-            }
-        }*/
         return new Info(added, changed, deleted);
     }
 }

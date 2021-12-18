@@ -1,6 +1,5 @@
 package ru.job4j.taskblock1;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Set;
@@ -39,7 +38,6 @@ public class AnalizeTest {
         );
     }
 
-    @Ignore
     @Test
     public void whenOneDeleted() {
         User u1 = new User(1, "A");
@@ -66,7 +64,6 @@ public class AnalizeTest {
         );
     }
 
-    @Ignore
     @Test
     public void whenAllChanged() {
         User u1 = new User(1, "A");
