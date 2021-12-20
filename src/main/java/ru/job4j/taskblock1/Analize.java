@@ -44,9 +44,10 @@ public class Analize {
         int added = 0;
         Map<Integer, String> map = previous.stream().collect(Collectors.toMap(User::getId, User::getName));
         for (User user : current) {
-            if (map.get(user.getId()) != null && !user.getName().equals(map.get(user.getId()))) {
+            int id = user.getId();
+            if (map.get(id) != null && !user.getName().equals(map.get(id))) {
                 changed++;
-            } else  if (map.get(user.getId()) == null) {
+            } else  if (map.get(id) == null) {
                 added++;
             }
             deleted = map.size() - current.size() + added;
