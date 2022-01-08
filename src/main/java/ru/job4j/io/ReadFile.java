@@ -1,10 +1,13 @@
 package ru.job4j.io;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 
 /**
  * 0.2. FileInputStream.
+ * 0.3. BufferedReader.
  *
  * Данный класс показывает,
  * как производить чтение файла.
@@ -31,6 +34,27 @@ import java.io.IOException;
  * разбить текст по строкам (но! это
  * делает и обычный {@code println}.
  *
+ * Ниже пример с буфферизированными
+ * потоками - в таком случае мы
+ * читаем не по одному байту, а по
+ * несколько.
+ *
+ * 1.{@code new BufferedReader
+ * (new FileReader("input.txt")))} - тут
+ * наглядный пример шаблона декоратор.
+ * Один поток оборачивается в другой.
+ *
+ * 2.Базовый поток - это поток байтов.
+ * Его можно обернуть в символьный поток,
+ * если мы знаем, что нам нужно читать текст.
+ *
+ * 3.Символьные потоки позволяют читать
+ * сразу символы, а не байты. Так же у
+ * буферизированного символьного потока
+ * есть методы чтения целой строки.
+ * В нашем примере используется чтение
+ * и вывод строк через stream api.
+ *
  * @author Constantine on 08.01.2022
  */
 public class ReadFile {
@@ -46,6 +70,12 @@ public class ReadFile {
                 System.out.println(line);
             }*/
             System.out.println(text);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("With buffered stream...");
+        try (BufferedReader in = new BufferedReader(new FileReader("input.txt"))) {
+            in.lines().forEach(System.out::println);
         } catch (IOException e) {
             e.printStackTrace();
         }
