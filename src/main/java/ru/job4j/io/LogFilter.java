@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class LogFilter {
 
     public static List<String> filter(String file) {
-        Pattern pattern = Pattern.compile(" 404..");
+        Pattern pattern = Pattern.compile("\\s404\\s(-|\\d{4})");
         List<String> result = new ArrayList<>();
         try (BufferedReader in = new BufferedReader(new FileReader("log.txt"))) {
             result = in.lines()
