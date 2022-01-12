@@ -35,7 +35,7 @@ public class LogFilter {
     public static List<String> filter(String file) {
         Pattern pattern = Pattern.compile("\\s404\\s(-|\\d{4})");
         List<String> result = new ArrayList<>();
-        try (BufferedReader in = new BufferedReader(new FileReader("log.txt"))) {
+        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             result = in.lines()
                     .filter(pattern.asPredicate())
                     .collect(Collectors.toList());
