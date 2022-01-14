@@ -36,13 +36,15 @@ public class Config {
      * все ключи в карту values.
      */
     public void load() {
-        Pattern pattern = Pattern.compile("(.*)=(.*|^\\s*)");
+        Pattern pattern = Pattern.compile("(.*)=(.*)|(.*)=(^$)");
         try (BufferedReader read = new BufferedReader(new FileReader(this.path))) {
             String text;
             while ((text = read.readLine()) != null) {
-                if (!text.contains("#") && !text.isEmpty()) {
+                if (!text.isEmpty() && !text.startsWith("#")) {
                     Matcher matcher = pattern.matcher(text);
-                    values.put(matcher.group(1), matcher.group(2));
+                    if (matcher.find()) {
+                        values.put(matcher.group(1), matcher.group(2));
+                    }
                 }
             }
         } catch (IOException e) {
@@ -56,7 +58,7 @@ public class Config {
      * @return значение ключа.
      */
     public String value(String key) {
-        if (key == null) {
+        if (!values.containsKey(key)) {
             throw new UnsupportedOperationException("Don't impl this method yet!");
         }
         return values.get(key);
