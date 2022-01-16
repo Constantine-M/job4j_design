@@ -76,8 +76,7 @@ public class Config {
      */
     public String value(String key) {
         if (!values.containsKey(key)) {
-            throw new IllegalArgumentException();
-            /*throw new UnsupportedOperationException("Don't impl this method yet!");*/
+            throw new IllegalArgumentException("Key is not found! Fail to parsed the key from file.");
         }
         return values.get(key);
     }
