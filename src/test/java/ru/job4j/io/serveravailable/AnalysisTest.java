@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.*;
  * @author Constantine on 17.01.2022
  */
 public class AnalysisTest {
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
@@ -60,7 +61,6 @@ public class AnalysisTest {
         try (BufferedReader in = new BufferedReader(new FileReader(target))) {
             in.lines().forEach(result::add);
         }
-        assertThat(result.get(0), is("10:57:01;10:59:01"));
         assertThat(result.get(1), is("11:01:02;11:02:02"));
     }
 }
