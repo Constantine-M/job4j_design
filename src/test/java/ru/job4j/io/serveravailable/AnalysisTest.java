@@ -8,8 +8,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -57,10 +55,11 @@ public class AnalysisTest {
             out.println("200 11:02:02");
         }
         analysis.unavailable(source.getAbsolutePath(), target.getAbsolutePath());
-        List<String> result = new ArrayList<>();
+        StringBuilder result = new StringBuilder();
         try (BufferedReader in = new BufferedReader(new FileReader(target))) {
-            in.lines().forEach(result::add);
+            in.lines().forEach(rsl -> result.append(rsl + "\n"));
         }
-        assertThat(result.get(1), is("11:01:02;11:02:02"));
+        assertThat(result.toString(), is("10:57:01;10:59:01"
+        + "\n" + "11:01:02;11:02:02" + "\n"));
     }
 }
