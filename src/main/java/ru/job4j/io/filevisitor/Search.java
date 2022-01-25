@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -24,13 +25,15 @@ public class Search {
      * @param condition условие выборки файла.
      * @throws IOException
      */
-    public static void search(Path root, Predicate<Path> condition) throws IOException {
+    public static List<Path> search(Path root, Predicate<Path> condition) throws IOException {
         SearchFiles searcher = new SearchFiles(condition);
         Files.walkFileTree(root, searcher);
+        return searcher.getPaths();
     }
 
     public static void main(String[] args) throws  Exception {
         Path start = Paths.get("C:\\projects\\job4j_design\\src\\main\\java\\ru\\job4j\\tree");
-        search(start, p -> p.toFile().getName().endsWith(".java"));
+        List<Path> paths = search(start, p -> p.toFile().getName().endsWith(".java"));
+        paths.forEach(System.out::println);
     }
 }
