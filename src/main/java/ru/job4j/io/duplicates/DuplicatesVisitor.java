@@ -15,39 +15,19 @@ import java.util.*;
  *
  * @author Constantine on 25.01.2022
  */
-public class DuplicatesVisitor extends SimpleFileVisitor<Path> {
+public class DuplicatesVisitor extends SimpleFileVisitor<java.nio.file.Path> {
 
-    /**
-     * Данное поле описывает список
-     * уникальных файлов.
-     */
-    private Set<FileProperty> uniques = new HashSet<>();
+    private final Map<FileProperty, Path> hmap = new HashMap<>();
 
-    /**
-     * Данное поле описывает список
-     * файлов-дубликатов.
-     */
-    private List<Path> duplicates = new ArrayList<>();
+    private List<Path> duplicate = new ArrayList<>();
 
-    public List<Path> getDuplicates() {
-        return duplicates;
+    public List<Path> getDuplicate() {
+        return duplicate;
     }
 
     /**
      * Данный метод проходит по всей структуре
      * файла, анализируя каждый элемент.
-     *
-     * 1.Так как файл определен именем и размером,
-     * то чтобы найти дубль, использовали
-     * структуру {@link Set}. Туда попадают
-     * только уникальные файлы.
-     *
-     * 2.Все дубли будут записаны в список
-     * дубликатов (отдельный список).
-     *
-     * Но есть нюанс - мы не можем получить
-     * все дубликаты. Первый (уникальный)
-     * файл в другом списке.
      *
      * @param file директория.
      * @return переходит к следующему файлу
@@ -57,8 +37,11 @@ public class DuplicatesVisitor extends SimpleFileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         FileProperty currentFile = new FileProperty(file.toFile().length(), file.getFileName().toString());
-        if (!uniques.add(currentFile)) {
-            duplicates.add(file);
+        if (!hmap.containsKey(currentFile)) {
+            hmap.put(currentFile, file);
+        } else {
+            duplicate.add(file);
+            duplicate.add(hmap.get(currentFile));
         }
         return FileVisitResult.CONTINUE;
     }

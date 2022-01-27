@@ -15,12 +15,16 @@ public class DuplicatesFinder {
     public static List<Path> findDuplicate(Path path) throws IOException {
         DuplicatesVisitor dupleVisit = new DuplicatesVisitor();
         Files.walkFileTree(path, dupleVisit);
-        return dupleVisit.getDuplicates();
+        return dupleVisit.getDuplicate();
+        /*Map<FileProperty, Path> hmap = dupleVisit.getFiles();
+        for (Map.Entry<FileProperty, Path> entry : hmap.entrySet()) {
+            System.out.println(entry.getKey() + " ========== " + entry.getValue());
+        }*/
     }
 
     public static void main(String[] args) throws IOException {
         Path root = Path.of("./data");
-        List<Path> duplicates = findDuplicate(root);
-        duplicates.forEach(System.out::println);
+        List<Path> list = findDuplicate(root);
+        list.forEach(System.out::println);
     }
 }
