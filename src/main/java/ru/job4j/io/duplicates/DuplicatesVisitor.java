@@ -29,6 +29,22 @@ public class DuplicatesVisitor extends SimpleFileVisitor<java.nio.file.Path> {
      * Данный метод проходит по всей структуре
      * файла, анализируя каждый элемент.
      *
+     * 1.Проходимся по директории и заполняем
+     * карту, где ключом является объект
+     * класса {@link FileProperty}.
+     *
+     * 2.В карте содержатся только уникальные
+     * ключи, поэтому если мы находим дубликат,
+     * то помещаем его в список. В списке
+     * мы храним только пути до дубликатов.
+     *
+     * 3.Прежед чем поместить в список,
+     * спрашиваем, есть ли в этом списке
+     * помимо дубликата и оригинальный файл?
+     * Если нету,то добавляем в список
+     * и оригинальный файл, и дубликат.
+     * Иначе помещаем в список только дубликат.
+     *
      * @param file директория.
      * @return переходит к следующему файлу
      * в структуре.
@@ -39,9 +55,11 @@ public class DuplicatesVisitor extends SimpleFileVisitor<java.nio.file.Path> {
         FileProperty currentFile = new FileProperty(file.toFile().length(), file.getFileName().toString());
         if (!hmap.containsKey(currentFile)) {
             hmap.put(currentFile, file);
+        } else if (!duplicate.contains(hmap.get(currentFile))) {
+            duplicate.add(hmap.get(currentFile));
+            duplicate.add(file);
         } else {
             duplicate.add(file);
-            duplicate.add(hmap.get(currentFile));
         }
         return FileVisitResult.CONTINUE;
     }
