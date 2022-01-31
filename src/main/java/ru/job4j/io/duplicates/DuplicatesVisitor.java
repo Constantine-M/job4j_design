@@ -17,12 +17,10 @@ import java.util.*;
  */
 public class DuplicatesVisitor extends SimpleFileVisitor<java.nio.file.Path> {
 
-    private final Map<FileProperty, Path> hmap = new HashMap<>();
+    private final Map<FileProperty, List<Path>> duplicates = new HashMap<>();
 
-    private List<Path> duplicate = new ArrayList<>();
-
-    public List<Path> getDuplicate() {
-        return duplicate;
+    public Map<FileProperty, List<Path>> getDuplicates() {
+        return duplicates;
     }
 
     /**
@@ -34,16 +32,22 @@ public class DuplicatesVisitor extends SimpleFileVisitor<java.nio.file.Path> {
      * класса {@link FileProperty}.
      *
      * 2.В карте содержатся только уникальные
-     * ключи, поэтому если мы находим дубликат,
-     * то помещаем его в список. В списке
-     * мы храним только пути до дубликатов.
+     * ключи, поэтому если мы находим первый
+     * уникальный файл (оригинал), то создаем
+     * для него новый список, в котором будем
+     * хранить путь к нему.
      *
-     * 3.Прежед чем поместить в список,
-     * спрашиваем, есть ли в этом списке
-     * помимо дубликата и оригинальный файл?
-     * Если нету,то добавляем в список
-     * и оригинальный файл, и дубликат.
-     * Иначе помещаем в список только дубликат.
+     * 3.Далее добавляем путь к этому файлу в
+     * созданный список.
+     *
+     * 3.Если в процессе прохождения по папкам
+     * мы находим дубликат файла-оригинала,
+     * то путь к этому дубликату сохраняем в
+     * список путей.
+     *
+     * Этот список ассоциируется с файлом-оригиналом
+     * (с ключом). В случае нахождения дубликата
+     * у 1 файла будет 2 разных пути.
      *
      * @param file директория.
      * @return переходит к следующему файлу
@@ -53,13 +57,11 @@ public class DuplicatesVisitor extends SimpleFileVisitor<java.nio.file.Path> {
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         FileProperty currentFile = new FileProperty(file.toFile().length(), file.getFileName().toString());
-        if (!hmap.containsKey(currentFile)) {
-            hmap.put(currentFile, file);
-        } else if (!duplicate.contains(hmap.get(currentFile))) {
-            duplicate.add(hmap.get(currentFile));
-            duplicate.add(file);
+        if (!duplicates.containsKey(currentFile)) {
+            duplicates.put(currentFile, new ArrayList<>());
+            duplicates.get(currentFile).add(file);
         } else {
-            duplicate.add(file);
+            duplicates.get(currentFile).add(file);
         }
         return FileVisitResult.CONTINUE;
     }
