@@ -4,6 +4,7 @@ import java.io.File;
 
 /**
  * 4.0. File.
+ * 5. Валидация параметров запуска.
  *
  * В данногй задаче применяется метод
  * {@link String#format(String, Object...)},
@@ -21,7 +22,7 @@ import java.io.File;
  * 3.В цикле получаем список файлов
  * в этой директории.
  *
- * @author Constantine on 22.01.2022
+ * @author Constantine on 31.01.2022
  */
 public class Dir {
 
@@ -54,7 +55,10 @@ public class Dir {
     }
 
     public static void main(String[] args) {
-        File file = new File("C:\\projects");
+        if (args.length == 0) {
+            throw new IllegalArgumentException("Root folder is null. Usage java -jar dir.jar ROOT_FOLDER.");
+        }
+        File file = new File(args[0]);
         if (!file.exists()) {
             throw new IllegalArgumentException(String.format("Not exist %s", file.getAbsoluteFile()));
         }
