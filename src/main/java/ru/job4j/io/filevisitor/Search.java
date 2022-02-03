@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * 4.1. Сканирование файловой системы.
@@ -25,27 +26,23 @@ public class Search {
      * и все вложенные в нее папки.
      *
      * @param root начальная папка.
-     * @param extension расширение файла.
+     * @param condition условие поиска файла.
      * @throws IOException
      */
-    public static List<Path> search(Path root, String extension) throws IOException {
-        if (root == null) {
-            throw new IllegalArgumentException("Enter the path you want to check!");
-        }
-        SearchFiles searcher = new SearchFiles(extension);
+    public static List<Path> search(Path root, Predicate<Path> condition) throws IOException {
+        SearchFiles searcher = new SearchFiles(condition);
         Files.walkFileTree(root, searcher);
         return searcher.getPaths();
     }
 
     public static void main(String[] args) throws  Exception {
-        Path root = Paths.get("C:\\projects\\job4j_design\\src\\main\\java\\ru\\job4j\\tree");
-        if (!root.toFile().exists()) {
-            throw new IllegalArgumentException(String.format("Not exist %s", root.toAbsolutePath()));
+        if (args[0].length() == 0) {
+            throw new IllegalArgumentException("Enter the path you want to check!");
         }
-        if (!root.toFile().isDirectory()) {
-            throw new IllegalArgumentException(String.format("Not directory %s", root.toAbsolutePath()));
+        if (args[1].length() == 0) {
+            throw new IllegalArgumentException("Please, enter the extension you want to find!");
         }
-        List<Path> paths = search(root, ".java");
-        paths.forEach(System.out::println);
+        Path start = Paths.get(args[0]);
+        search(start, p -> p.toFile().getName().endsWith(args[1])).forEach(System.out::println);
     }
 }

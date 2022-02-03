@@ -7,6 +7,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * 4.1. Сканирование файловой системы.
@@ -20,15 +21,11 @@ import java.util.List;
  */
 public class SearchFiles extends SimpleFileVisitor<Path> {
 
-    /**
-     * Данное поле описывает расширение файла.
-     */
-    private String extension;
-
+    private Predicate<Path> condition;
     private List<Path> paths = new ArrayList<>();
 
-    public SearchFiles(String extension) {
-        this.extension = extension;
+    public SearchFiles(Predicate<Path> condition) {
+        this.condition = condition;
     }
 
     public List<Path> getPaths() {
@@ -37,10 +34,8 @@ public class SearchFiles extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        if (extension == null || extension.isEmpty()) {
-            throw new IllegalArgumentException("Please, enter the extension you want to find!");
-        }
-        if (file.toFile().getName().endsWith(extension)) {
+        if (condition.test(file)) {
+            System.out.println(file.toString());
             paths.add(file);
         }
         return FileVisitResult.CONTINUE;
