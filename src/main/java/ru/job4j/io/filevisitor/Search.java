@@ -35,14 +35,20 @@ public class Search {
         return searcher.getPaths();
     }
 
-    public static void main(String[] args) throws  Exception {
-        if (args[0].length() == 0) {
+    public static boolean valid(String[] args) {
+        if (args[0].isEmpty()) {
             throw new IllegalArgumentException("Enter the path you want to check!");
         }
-        if (args[1].length() == 0) {
+        if (args[1].isEmpty()) {
             throw new IllegalArgumentException("Please, enter the extension you want to find!");
         }
-        Path start = Paths.get(args[0]);
-        search(start, p -> p.toFile().getName().endsWith(args[1])).forEach(System.out::println);
+        return true;
+    }
+
+    public static void main(String[] args) throws  Exception {
+        if (valid(args)) {
+            Path start = Paths.get(args[0]);
+            search(start, p -> p.toFile().getName().endsWith(args[1])).forEach(System.out::println);
+        }
     }
 }
