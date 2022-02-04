@@ -35,9 +35,29 @@ public class ArgsNameTest {
         jvm.get("Xmx");
     }
 
-    @Ignore
     @Test(expected = IllegalArgumentException.class)
     public void whenWrongSomeArgument() {
         ArgsName jvm = ArgsName.of(new String[] {"-enconding=UTF-8", "-Xmx="});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void whenKeyNotExist() {
+        ArgsName jvm = ArgsName.of(new String[] {"=UTF-8"});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void whenHyphenNotExist() {
+        ArgsName jvm = ArgsName.of(new String[] {"enconding=UTF-8"});
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void whenEqualSignDoesNotExist() {
+        ArgsName jvm = ArgsName.of(new String[] {"-enconding--UTF-8"});
+    }
+
+    @Ignore
+    @Test(expected = IllegalArgumentException.class)
+    public void whenEqualSignMoreThanOne() {
+        ArgsName jvm = ArgsName.of(new String[] {"-enconding==UTF-8"});
     }
 }
