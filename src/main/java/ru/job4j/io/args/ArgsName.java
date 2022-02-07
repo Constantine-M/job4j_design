@@ -24,13 +24,16 @@ public class ArgsName {
      *
      * У алгоритма ниже (с использованием
      * Pattern/Matcher) есть минус -
-     * он может выкинуть NPE.
+     * он может выкинуть NPE. Но мы
+     * этого избежали, т.к. все проверки
+     * проходятся в методе
+     * {@link ArgsName#of(String[])}.
      * 1.Проходим по массиву строк.
      * 2.С помощью регулярного выражения
      * находим совпадение.
      * 3.Заполняем карту.
      *
-     * Поэтому воспользуемся методом
+     * Можно еще воспользоваться методом
      * {@link String#split(String)}.
      * 1.Проходимся по массиву.
      * 2.Разбиваем строку по символу "=".
@@ -44,22 +47,29 @@ public class ArgsName {
      * @param args входящие строки.
      */
     private void parse(String args) {
-       /* String[] str = args.split("=");
-        values.put(str[0].substring(1), str[1]);*/
         Pattern pattern = Pattern.compile("(\\w*)=(.*)");
         Matcher matcher = pattern.matcher(args);
         if (matcher.find()) {
             values.put(matcher.group(1), matcher.group(2));
         }
-     /*   Pattern pattern = Pattern.compile("(\\w*)=(.*)");
-        for (String str : args) {
-            Matcher matcher = pattern.matcher(str);
-            if (matcher.find()) {
-                values.put(matcher.group(1), matcher.group(2));
-            }
-        }*/
     }
 
+    /**
+     * Данный метод анализирует строки.
+     *
+     * Если строка удовлетворяет
+     * шаблону, то вызывается приватный
+     * метод {@link ArgsName#parse(String)}.
+     *
+     * Здесь в регулярном выражении
+     * точка обозначает тот самый символ
+     * "тире", наличие которого мы
+     * должны проверять.
+     *
+     * @param args строки, передаваемые
+     *             для анализа.
+     * @return объект класса {@link ArgsName}.
+     */
     public static ArgsName of(String[] args) {
         if (args.length == 0) {
             throw new IllegalArgumentException();
@@ -80,19 +90,6 @@ public class ArgsName {
                 throw new IllegalArgumentException();
             }
         }
-        /*for (String str : args) {
-            String[] val = str.split("=");
-            if (val.length >= 0) {
-                throw new IllegalArgumentException();
-            }
-            if (val[0].isEmpty() || !val[0].startsWith("-")) {
-                throw new IllegalArgumentException();
-            }
-            if (val[1].isEmpty()) {
-                throw new IllegalArgumentException();
-            }
-            names.parse(str);
-        }*/
         return names;
     }
 

@@ -1,6 +1,5 @@
 package ru.job4j.io.args;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -55,9 +54,9 @@ public class ArgsNameTest {
         ArgsName jvm = ArgsName.of(new String[] {"-enconding--UTF-8"});
     }
 
-    @Ignore
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void whenEqualSignMoreThanOne() {
         ArgsName jvm = ArgsName.of(new String[] {"-enconding==UTF-8"});
+        assertThat(jvm.get("enconding"), is("=UTF-8"));
     }
 }
