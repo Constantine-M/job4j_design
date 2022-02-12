@@ -7,6 +7,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * 5.2. Архивировать проект.
@@ -19,13 +20,17 @@ import java.util.List;
  */
 public class SearchFilesZip extends SimpleFileVisitor<Path> {
 
-    private String extension;
+    /*private String extension;*/
+    private Predicate<Path> condition;
 
     private List<Path> paths = new ArrayList<>();
 
-    public SearchFilesZip(String extension) {
-        this.extension = extension;
+    public SearchFilesZip(Predicate<Path> condition) {
+        this.condition = condition;
     }
+      /*  public SearchFilesZip(String extension) {
+        this.extension = extension;
+    }*/
 
     public List<Path> getPaths() {
         return paths;
@@ -33,9 +38,12 @@ public class SearchFilesZip extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        if (!file.toFile().getName().endsWith(extension)) {
+        if (condition.test(file)) {
             paths.add(file);
         }
+        /*if (!file.toFile().getName().endsWith(extension)) {
+            paths.add(file);
+        }*/
         return FileVisitResult.CONTINUE;
     }
 }

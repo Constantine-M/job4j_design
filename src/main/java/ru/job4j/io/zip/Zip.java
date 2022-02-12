@@ -2,7 +2,9 @@ package ru.job4j.io.zip;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -61,29 +63,34 @@ public class Zip {
         }
     }
 
-    public static boolean valid(String[] args) {
+    /*public static boolean valid(String[] args) {
         if (args.length == 0) {
             throw new IllegalArgumentException("You need to text the arguments!");
         }
-        if (args[0].isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        if (args[1].isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        if (args[2].isEmpty()) {
-            throw new IllegalArgumentException();
-        }
         return true;
-    }
+    }*/
 
     public static void main(String[] args) throws IOException {
-        if (valid(args)) {
+        /*if (valid(args)) {
             ArgsNameZip jvm = ArgsNameZip.of(args);
             Path source = Paths.get(jvm.get("d"));
             Path target = Paths.get(jvm.get("o"));
+            Predicate<Path> pred = path -> !source.toFile().getName().endsWith(jvm.get("e"));
             List<Path> sources = SearchZip.search(source, jvm.get("e"));
+            List<Path> sources = SearchZip.search(source, pred);
             packFiles(sources, target);
+        }*/
+        ArgsNameZip jvm = ArgsNameZip.of(args);
+        Path source = Paths.get(jvm.get("d"));
+        Path target = Paths.get(jvm.get("o"));
+        String excl = jvm.get("e");
+        Predicate<Path> pred = path -> !path.toFile().getName().endsWith(excl);
+        List<Path> sources = new ArrayList<>();
+        if (Files.isDirectory(source)) {
+            sources = SearchZip.search(source, pred);
+        } else {
+            throw new IllegalArgumentException("The path is not exists!");
         }
+        packFiles(sources, target);
     }
 }

@@ -37,7 +37,12 @@ public class ArgsNameZip {
         Pattern pattern = Pattern.compile("(\\w*)=(.*)");
         Matcher matcher = pattern.matcher(args);
         if (matcher.find()) {
-            values.put(matcher.group(1), matcher.group(2));
+            /*values.put(matcher.group(1), matcher.group(2));*/
+            if (matcher.group(1).equals("d") || matcher.group(1).equals("e") || matcher.group(1).equals("o")) {
+                values.put(matcher.group(1), matcher.group(2));
+            } else {
+                throw new IllegalArgumentException("Use keys: -d (directory) / -e (exclude) / -o (output)");
+            }
         }
     }
 
@@ -59,7 +64,7 @@ public class ArgsNameZip {
      */
     public static ArgsNameZip of(String[] args) {
         if (args.length == 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("You need to text the arguments!");
         }
         ArgsNameZip names = new ArgsNameZip();
         Pattern pattern = Pattern.compile("(.\\w*)=(.*)");
