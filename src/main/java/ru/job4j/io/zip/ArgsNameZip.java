@@ -63,9 +63,9 @@ public class ArgsNameZip {
      * @return объект класса {@link ArgsNameZip}.
      */
     public static ArgsNameZip of(String[] args) {
-        if (args.length == 0) {
+        /*if (args.length == 0) {
             throw new IllegalArgumentException("You need to text the arguments!");
-        }
+        }*/
         ArgsNameZip names = new ArgsNameZip();
         Pattern pattern = Pattern.compile("(.\\w*)=(.*)");
         for (String str : args) {

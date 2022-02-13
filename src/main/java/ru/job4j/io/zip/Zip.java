@@ -15,6 +15,24 @@ import java.util.zip.ZipOutputStream;
  */
 public class Zip {
 
+    private Path source;
+
+    private Path target;
+
+    private String excl;
+
+    public Path getSource() {
+        return source;
+    }
+
+    public Path getTarget() {
+        return target;
+    }
+
+    public String getExcl() {
+        return excl;
+    }
+
     /**
      * Данный метод архивирует файлы.
      *
@@ -63,12 +81,19 @@ public class Zip {
         }
     }
 
-    /*public static boolean valid(String[] args) {
-        if (args.length == 0) {
+    private boolean valid(String[] args) {
+        ArgsNameZip jvm = ArgsNameZip.of(args);
+        if (args.length != 3) {
             throw new IllegalArgumentException("You need to text the arguments!");
         }
+        source = Paths.get(jvm.get("d"));
+        target = Paths.get(jvm.get("o"));
+        excl = jvm.get("e");
+        if (!Files.isDirectory(source)) {
+            throw new IllegalArgumentException("The path is not exists!");
+        }
         return true;
-    }*/
+    }
 
     public static void main(String[] args) throws IOException {
         /*if (valid(args)) {
@@ -80,17 +105,22 @@ public class Zip {
             List<Path> sources = SearchZip.search(source, pred);
             packFiles(sources, target);
         }*/
-        ArgsNameZip jvm = ArgsNameZip.of(args);
+        Zip zip = new Zip();
+        zip.valid(args);
+        /*ArgsNameZip jvm = ArgsNameZip.of(args);
         Path source = Paths.get(jvm.get("d"));
         Path target = Paths.get(jvm.get("o"));
         String excl = jvm.get("e");
         Predicate<Path> pred = path -> !path.toFile().getName().endsWith(excl);
-        List<Path> sources = new ArrayList<>();
-        if (Files.isDirectory(source)) {
+        List<Path> sources = SearchZip.search(source, pred);
+        packFiles(sources, target);*/
+        Predicate<Path> pred = path -> !path.toFile().getName().endsWith(zip.getExcl());
+        List<Path> sources = SearchZip.search(zip.getSource(), pred);
+        packFiles(sources, zip.getTarget());
+        /*if (Files.isDirectory(source)) {
             sources = SearchZip.search(source, pred);
         } else {
             throw new IllegalArgumentException("The path is not exists!");
-        }
-        packFiles(sources, target);
+        }*/
     }
 }
