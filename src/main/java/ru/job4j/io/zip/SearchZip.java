@@ -29,9 +29,6 @@ public class SearchZip {
      * @throws IOException
      */
     public static List<Path> search(Path root, Predicate<Path> condition) throws IOException {
-        /*if (!Files.exists(root)) {
-            throw new IllegalArgumentException("The path is not exists!");
-        }*/
         SearchFilesZip searcher = new SearchFilesZip(condition);
         Files.walkFileTree(root, searcher);
         return searcher.getPaths();

@@ -20,7 +20,6 @@ import java.util.function.Predicate;
  */
 public class SearchFilesZip extends SimpleFileVisitor<Path> {
 
-    /*private String extension;*/
     private Predicate<Path> condition;
 
     private List<Path> paths = new ArrayList<>();
@@ -28,9 +27,6 @@ public class SearchFilesZip extends SimpleFileVisitor<Path> {
     public SearchFilesZip(Predicate<Path> condition) {
         this.condition = condition;
     }
-      /*  public SearchFilesZip(String extension) {
-        this.extension = extension;
-    }*/
 
     public List<Path> getPaths() {
         return paths;
@@ -41,9 +37,6 @@ public class SearchFilesZip extends SimpleFileVisitor<Path> {
         if (condition.test(file)) {
             paths.add(file);
         }
-        /*if (!file.toFile().getName().endsWith(extension)) {
-            paths.add(file);
-        }*/
         return FileVisitResult.CONTINUE;
     }
 }

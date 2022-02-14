@@ -25,7 +25,7 @@ public class ArgsNameZip {
     /**
      * Данный метод разбивает входящую
      * строку на пары ключ-значение.
-     * <p>
+     *
      * 1.Проходим по массиву строк.
      * 2.С помощью регулярного выражения
      * находим совпадение.
@@ -37,7 +37,6 @@ public class ArgsNameZip {
         Pattern pattern = Pattern.compile("(\\w*)=(.*)");
         Matcher matcher = pattern.matcher(args);
         if (matcher.find()) {
-            /*values.put(matcher.group(1), matcher.group(2));*/
             if (matcher.group(1).equals("d") || matcher.group(1).equals("e") || matcher.group(1).equals("o")) {
                 values.put(matcher.group(1), matcher.group(2));
             } else {
@@ -48,11 +47,11 @@ public class ArgsNameZip {
 
     /**
      * Данный метод анализирует строки.
-     * <p>
+     *
      * Если строка удовлетворяет
      * шаблону, то вызывается приватный
      * метод {@link ArgsNameZip#parse(String)}.
-     * <p>
+     *
      * Здесь в регулярном выражении
      * точка обозначает тот самый символ
      * "тире", наличие которого мы
@@ -63,9 +62,6 @@ public class ArgsNameZip {
      * @return объект класса {@link ArgsNameZip}.
      */
     public static ArgsNameZip of(String[] args) {
-        /*if (args.length == 0) {
-            throw new IllegalArgumentException("You need to text the arguments!");
-        }*/
         ArgsNameZip names = new ArgsNameZip();
         Pattern pattern = Pattern.compile("(.\\w*)=(.*)");
         for (String str : args) {
