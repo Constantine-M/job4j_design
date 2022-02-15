@@ -1,0 +1,10 @@
+New String - 1
+New String - 2 
+New String - 3
+New String - 4
+New String - 5
+Новая строка 1
+Новая строка 2
+Новая строка 3
+Новая строка 4
+Новая строка 5
