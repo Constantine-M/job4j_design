@@ -13,9 +13,19 @@ import java.util.Scanner;
 /**
  * 6. Кодировка.
  *
+ * Данный класс описывает консольный
+ * чат с ботом. При этом бот имеет
+ * ряд заранее записаных ответов.
+ *
  * @author Constantine on 13.02.2022
  */
 public class ConsoleChat {
+
+    private static final String OUT = "закончить";
+
+    private static final String STOP = "стоп";
+
+    private static final String CONTINUE = "продолжить";
 
     /**
      * Данное поле описывает имя файла,
@@ -31,12 +41,6 @@ public class ConsoleChat {
      * бот.
      */
     private final String botAnswers;
-
-    private static final String OUT = "закончить";
-
-    private static final String STOP = "стоп";
-
-    private static final String CONTINUE = "продолжить";
 
     public ConsoleChat(String path, String botAnswers) {
         this.path = path;
@@ -82,33 +86,40 @@ public class ConsoleChat {
      * то по-новой вводим фразу.
      * Цикл делает оборот..
      *
-     * Фича: слово "продолжить"
-     * записывается в лог 2 раза.
-     * Проблему найти не могу.
+     * Так как метод
+     * {@link ConsoleChat#readPhrases()}
+     * возвращает список, то
+     * целесообразнее создать
+     * СПИСОК ПЕРЕД ЦИКЛОМ, а
+     * внутри цикла проходить по
+     * сформированному списку и
+     * получать рандомные ответы бота.
      */
     public void run() {
+        Random rnd = new Random();
         Scanner input = new Scanner(System.in);
         String message = input.nextLine();
         String safeWord = null;
+        List<String> botAnswers = readPhrases();
         List<String> log = new ArrayList<>();
+        log.add(message);
         while (!OUT.equals(message)) {
-            log.add(message);
             if (STOP.equals(message)) {
                 safeWord = message;
             }
             if (!STOP.equals(safeWord)) {
-                Random rnd = new Random();
-                String answer = readPhrases().get(rnd.nextInt(readPhrases().size()));
+                String answer = botAnswers.get(rnd.nextInt(botAnswers.size()));
                 System.out.println(answer);
                 log.add(answer);
                 message = input.nextLine();
+                log.add(message);
             } else if (CONTINUE.equals(message)) {
                 safeWord = message;
             } else {
                 message = input.nextLine();
+                log.add(message);
             }
         }
-        log.add(message);
         saveLog(log);
     }
 
