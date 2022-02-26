@@ -1,7 +1,6 @@
 package ru.job4j.io.scanner.csv;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -25,7 +24,6 @@ public class CSVReaderTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    @Ignore
     @Test
     public void whenFilterTwoColumns() throws IOException {
         String data = String.join(

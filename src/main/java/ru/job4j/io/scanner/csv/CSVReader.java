@@ -19,7 +19,7 @@ public class CSVReader {
 
     private static Path source;
 
-    private static Path target;
+    private static String target;
 
     /**
      * Данный метод читает файл СSV и записывает
@@ -63,7 +63,7 @@ public class CSVReader {
     public static void handle(ArgsNameSc argsName) {
         String[] columns = argsName.get("filter").split(",");
         source = Paths.get(argsName.get("path"));
-        target = Paths.get(argsName.get("out"));
+        target = argsName.get("out");
         try (Scanner scanner = new Scanner(source)) {
             scanner.useDelimiter(";");
             List<Integer> listIndex = new ArrayList<>();
@@ -73,13 +73,10 @@ public class CSVReader {
                 if (listIndex.isEmpty()) {
                     listIndex = findIndex(str, columns);
                 }
-                StringBuilder pair = new StringBuilder();
-                for (Integer i : listIndex) {
-                    pair.append(str[i]).append(";");
-                }
-                outList.add(pair.toString());
+                String concatString = concatStr(str, listIndex);
+                outList.add(concatString);
             }
-            Files.write(target, outList, StandardOpenOption.CREATE);
+            outputData(outList);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,8 +87,7 @@ public class CSVReader {
      * по которым мы хотим отфильтровать
      * таблицу.
      *
-     * Метод вынес, т.к. он по задумке
-     * должен использоваться только один раз.
+     * Метод должен использоваться только один раз.
      *
      * @param splitString массив значений
      *                    разделенной строки.
@@ -101,14 +97,73 @@ public class CSVReader {
      * колонок (в шапке таблицы).
      */
     private static List<Integer> findIndex(String[] splitString, String[] columns) {
-        List<Integer> index = new ArrayList<>();
-        for (String s : columns) {
-            int n = Arrays.asList(splitString).indexOf(s);
+        List<Integer> indexList = new ArrayList<>();
+        for (String colName : columns) {
+            int n = Arrays.asList(splitString).indexOf(colName);
             if (n != -1) {
-                index.add(n);
+                indexList.add(n);
             }
         }
-        return index;
+        if (indexList.isEmpty()) {
+            throw new IllegalArgumentException("There is no matches with column names.");
+        }
+        return indexList;
+    }
+
+    /**
+     * Данный метод выводит данные
+     * на консоль или записывает в файл.
+     *
+     * У ключа out есть 2 варианта.
+     * При вводе stdout данные будут
+     * выведены на консоль, иначе
+     * они должны быть записаны в файл.
+     *
+     * @param outList список объединенных
+     *                значений в строки.
+     * @throws IOException
+     */
+    private static void outputData(List<String> outList) throws IOException {
+        if (!target.equals("stdout")) {
+            Path out = Paths.get(target);
+            Files.write(out, outList);
+        } else {
+            for (String str : outList) {
+                System.out.println(str);
+            }
+        }
+    }
+
+    /**
+     * Данный метод объединяет значения
+     * с нужными индексами в строку.
+     *
+     * Так как объединенная строка
+     * будет добавлена в список на вывод,
+     * то значения между собой необходимо
+     * разделить знаком ";" - он
+     * используется в таблицах Excel
+     * у нас. В другой вариации используется
+     * в кач-ве разделителя знак ",".
+     *
+     * @param splitString разделенная по
+     *                    знаку строка.
+     * @param indexList список индексов,
+     *                  который подготовлен
+     *                  заранее.
+     * @return объединенная строка.
+     */
+    private static String concatStr(String[] splitString, List<Integer> indexList) {
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < indexList.size(); i++) {
+            int index = indexList.get(i);
+            if (i == indexList.size() - 1) {
+                str.append(splitString[index]);
+            } else {
+                str.append(splitString[index]).append(";");
+            }
+        }
+        return str.toString();
     }
 
     /**
@@ -128,12 +183,12 @@ public class CSVReader {
         }
         ArgsNameSc argsNames = ArgsNameSc.of(args);
         source = Paths.get(argsNames.get("path"));
-        target = Paths.get(argsNames.get("out"));
+        target = argsNames.get("out");
         String delimiter = argsNames.get("delimiter");
         if (!Files.isRegularFile(source)) {
             throw new IllegalArgumentException("This is not a file! Enter the file name and its extension!");
         }
-        if (!Files.isRegularFile(target) && !target.toString().equals("stdout")) {
+        if (!Files.isRegularFile(Paths.get(target)) && !target.equals("stdout")) {
             throw new IllegalArgumentException("The 'out' file is not a file!");
         }
         if (!delimiter.equals(";")) {
@@ -141,39 +196,9 @@ public class CSVReader {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ArgsNameSc argsNames = ArgsNameSc.of(args);
         valid(args);
         handle(argsNames);
-        /*List<Integer> index = new ArrayList<>();
-        List<String> outList = new ArrayList<>();
-        ArgsNameSc argsName = ArgsNameSc.of(new String[]
-                {"-path=file.csv", "-delimiter=;", "-out=stdout", "-filter=name,age"}
-                );
-        String[] filters = argsName.get("filter").split(",");
-        Path target = Paths.get("./data/target.csv");
-        Path source = Paths.get("./data/source.csv");
-        try (Scanner scanner = new Scanner(source)) {
-            scanner.useDelimiter(";");
-            while (scanner.hasNextLine()) {
-                String[] str = scanner.nextLine().split(";");
-                if (index.size() < filters.length) {
-                    for (String s : filters) {
-                        int n = Arrays.asList(str).indexOf(s);
-                        if (n != -1) {
-                            index.add(n);
-                        }
-                    }
-                }
-                StringBuilder pair = new StringBuilder();
-                for (Integer i : index) {
-                    pair.append(str[i]).append(";");
-                }
-                outList.add(pair.toString());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Files.write(target, outList, StandardOpenOption.CREATE);*/
     }
 }
