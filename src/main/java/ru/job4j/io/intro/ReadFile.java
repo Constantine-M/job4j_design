@@ -1,4 +1,4 @@
-package ru.job4j.io;
+package ru.job4j.io.intro;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
