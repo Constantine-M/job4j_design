@@ -1,14 +1,11 @@
 package ru.job4j.io.socket;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 2. Что такое Socket?
@@ -63,16 +60,12 @@ import java.util.regex.Pattern;
  * 1.Входящий поток читаем с помощью
  * {@link Scanner}.
  *
- * 2.Заранее задаем регулярное
- * выражением с помощью {@link Pattern},
- *
- * 3.Выносим за цикл {@link Matcher}.
- *
- * 4.Если входящая строка = null
+ * 2.Если входящая строка = null
  * или пустая - выходим из цикла.
  *
- * 5.Внутри цикла проверяем на
- * соответствие нашему шаблону.
+ * 3.Внутри цикла проверяем что
+ * в строке содержится сообщение
+ * с текстом "Bye".
  * Если нашли, то закрываем сокет,
  * тем самым разрывая соединение
  * между сервером и клиентом.
@@ -86,7 +79,6 @@ import java.util.regex.Pattern;
  */
 public class EchoServer {
     public static void main(String[] args) {
-        Pattern pattern = Pattern.compile("(\\w*)=(.\\w*)");
         try (ServerSocket server = new ServerSocket(9000)) {
             while (!server.isClosed()) {
                 Socket socket = server.accept();
@@ -94,26 +86,15 @@ public class EchoServer {
                 Scanner scan = new Scanner(new InputStreamReader(socket.getInputStream()))) {
                     out.write("HTTP/1.1 200 OK\\r\\n\\r\\n".getBytes());
                     String str = scan.nextLine();
-                    Matcher matcher = pattern.matcher(str);
                     while (str != null && !str.isEmpty()) {
-                        if (matcher.find()) {
-                            if (matcher.group(1).equals("msg") && matcher.group(2).equals("Bye")) {
-                                server.close();
-                            }
+                        if (str.contains("/?msg=Bye")) {
+                            server.close();
                         }
                         System.out.println(str);
                         str = scan.nextLine();
                     }
                     out.flush();
                 }
-                /*try (OutputStream out = socket.getOutputStream();
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-                    out.write("HTTP/1.1 200 OK\\r\\n\\r\\n".getBytes());
-                    for (String str = in.readLine(); str != null && !str.isEmpty(); str = in.readLine()) {
-                        System.out.println(str);
-                    }
-                    out.flush();
-                }*/
             }
         } catch (IOException e) {
             e.printStackTrace();
