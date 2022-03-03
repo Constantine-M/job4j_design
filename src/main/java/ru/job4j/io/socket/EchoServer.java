@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 2. Что такое Socket?
@@ -75,20 +77,32 @@ import java.util.Scanner;
  * отреагировать на нее и закрыть
  * соединение.
  *
+ * P.S. To check out your service,
+ * enter <http://localhost:9000/?msg=Hello>
+ * in your browser.
+ *
  * @author Constantine on 27.02.2022
  */
 public class EchoServer {
     public static void main(String[] args) {
+        Pattern pattern = Pattern.compile("\\w*=(\\w*)");
         try (ServerSocket server = new ServerSocket(9000)) {
             while (!server.isClosed()) {
                 Socket socket = server.accept();
                 try (OutputStream out = socket.getOutputStream();
                 Scanner scan = new Scanner(new InputStreamReader(socket.getInputStream()))) {
-                    out.write("HTTP/1.1 200 OK\\r\\n\\r\\n".getBytes());
+                    out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
                     String str = scan.nextLine();
+                    Matcher matcher = pattern.matcher(str);
                     while (str != null && !str.isEmpty()) {
-                        if (str.contains("/?msg=Bye")) {
-                            server.close();
+                        if (matcher.find()) {
+                            if (matcher.group(1).equals("Exit")) {
+                                server.close();
+                            } else if (matcher.group(1).equals("Hello")) {
+                                out.write("Hey man! What’s shakin’?".getBytes());
+                            } else {
+                                out.write(matcher.group(1).getBytes());
+                            }
                         }
                         System.out.println(str);
                         str = scan.nextLine();
