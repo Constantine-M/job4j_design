@@ -84,10 +84,16 @@ import java.util.regex.Pattern;
  * @author Constantine on 27.02.2022
  */
 public class EchoServer {
+
+    private static final String EXIT = "Exit";
+
+    private static final String HELLO = "Hello";
+
     public static void main(String[] args) {
         Pattern pattern = Pattern.compile("\\w*=(\\w*)");
         try (ServerSocket server = new ServerSocket(9000)) {
             while (!server.isClosed()) {
+                System.out.println("Server is waiting for connection..");
                 Socket socket = server.accept();
                 try (OutputStream out = socket.getOutputStream();
                 Scanner scan = new Scanner(new InputStreamReader(socket.getInputStream()))) {
@@ -96,10 +102,18 @@ public class EchoServer {
                     Matcher matcher = pattern.matcher(str);
                     while (str != null && !str.isEmpty()) {
                         if (matcher.find()) {
-                            if (matcher.group(1).equals("Exit")) {
-                                server.close();
-                            } else if (matcher.group(1).equals("Hello")) {
-                                out.write("Hey man! What’s shakin’?".getBytes());
+                            if (str.contains("/?msg=Exit")) {
+                                if (EXIT.equals(matcher.group(1))) {
+                                    server.close();
+                                } else {
+                                    out.write(matcher.group(1).getBytes());
+                                }
+                            } else if (str.contains("/?msg=Hello")) {
+                                if (HELLO.equals(matcher.group(1))) {
+                                    out.write("Hey man! Whats shakin?".getBytes());
+                                } else {
+                                    out.write(matcher.group(1).getBytes());
+                                }
                             } else {
                                 out.write(matcher.group(1).getBytes());
                             }
