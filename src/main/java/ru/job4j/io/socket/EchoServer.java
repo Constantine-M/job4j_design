@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 2. Что такое Socket?
@@ -80,17 +78,13 @@ import java.util.regex.Pattern;
  * P.S. To check out your service,
  * enter <http://localhost:9000/?msg=Hello>
  * in your browser.
+ * Better use the Internet Explorer
+ * browser!
  *
  * @author Constantine on 27.02.2022
  */
 public class EchoServer {
-
-    private static final String EXIT = "Exit";
-
-    private static final String HELLO = "Hello";
-
     public static void main(String[] args) {
-        Pattern pattern = Pattern.compile("\\w*=(\\w*)");
         try (ServerSocket server = new ServerSocket(9000)) {
             while (!server.isClosed()) {
                 System.out.println("Server is waiting for connection..");
@@ -99,23 +93,15 @@ public class EchoServer {
                 Scanner scan = new Scanner(new InputStreamReader(socket.getInputStream()))) {
                     out.write("HTTP/1.1 200 OK\r\n\r\n".getBytes());
                     String str = scan.nextLine();
-                    Matcher matcher = pattern.matcher(str);
+                    String[] splitStr = str.split("\\s");
                     while (str != null && !str.isEmpty()) {
-                        if (matcher.find()) {
-                            if (str.contains("/?msg=Exit")) {
-                                if (EXIT.equals(matcher.group(1))) {
-                                    server.close();
-                                } else {
-                                    out.write(matcher.group(1).getBytes());
-                                }
-                            } else if (str.contains("/?msg=Hello")) {
-                                if (HELLO.equals(matcher.group(1))) {
-                                    out.write("Hey man! Whats shakin?".getBytes());
-                                } else {
-                                    out.write(matcher.group(1).getBytes());
-                                }
+                        if (str.contains("/?msg=")) {
+                            if (splitStr[1].equals("/?msg=Exit")) {
+                                server.close();
+                            } else if (splitStr[1].equals("/?msg=Hello")) {
+                                out.write("Hey man! Whats shakin?".getBytes());
                             } else {
-                                out.write(matcher.group(1).getBytes());
+                                out.write("What".getBytes());
                             }
                         }
                         System.out.println(str);
