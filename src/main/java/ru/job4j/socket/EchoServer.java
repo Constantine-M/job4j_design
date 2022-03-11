@@ -1,4 +1,4 @@
-package ru.job4j.io.socket;
+package ru.job4j.socket;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -84,6 +84,10 @@ import java.util.Scanner;
  * @author Constantine on 27.02.2022
  */
 public class EchoServer {
+
+    private static final String EXIT = "/?msg=Exit";
+    private static final String HELLO = "/?msg=Hello";
+
     public static void main(String[] args) {
         try (ServerSocket server = new ServerSocket(9000)) {
             while (!server.isClosed()) {
@@ -96,9 +100,9 @@ public class EchoServer {
                     String[] splitStr = str.split("\\s");
                     while (str != null && !str.isEmpty()) {
                         if (str.contains("/?msg=")) {
-                            if (splitStr[1].equals("/?msg=Exit")) {
+                            if (EXIT.equals(splitStr[1])) {
                                 server.close();
-                            } else if (splitStr[1].equals("/?msg=Hello")) {
+                            } else if (HELLO.equals(splitStr[1])) {
                                 out.write("Hey man! Whats shakin?".getBytes());
                             } else {
                                 out.write("What".getBytes());
