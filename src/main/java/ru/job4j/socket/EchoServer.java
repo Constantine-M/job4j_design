@@ -1,5 +1,8 @@
 package ru.job4j.socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -9,6 +12,7 @@ import java.util.Scanner;
 
 /**
  * 2. Что такое Socket?
+ * 4. Slf4j - вывод exception.
  *
  * Данный класс описывает сервер и
  * принципы его работы.
@@ -75,6 +79,15 @@ import java.util.Scanner;
  * отреагировать на нее и закрыть
  * соединение.
  *
+ * ДОРАБОТАНО
+ *
+ * Прикрутили логгер.
+ *
+ * Если в проекте используется логгер,
+ * то для вывода ошибок или отладочной
+ * информации нужно использовать
+ * только логгер!
+ *
  * P.S. To check out your service,
  * enter <http://localhost:9000/?msg=Hello>
  * in your browser.
@@ -84,6 +97,8 @@ import java.util.Scanner;
  * @author Constantine on 27.02.2022
  */
 public class EchoServer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EchoServer.class.getName());
 
     private static final String EXIT = "/?msg=Exit";
     private static final String HELLO = "/?msg=Hello";
@@ -115,7 +130,7 @@ public class EchoServer {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Exception write to log", e);
         }
     }
 }
