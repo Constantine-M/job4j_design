@@ -69,6 +69,7 @@ public class UsageLog4j {
         boolean married = false;
         char className = 'A';
         byte cache = 127;
+        short sell = 3446;
         long income = 475668345;
         float cpuPower = 3.5f;
         double damage = 8549684.1549;
@@ -81,5 +82,6 @@ public class UsageLog4j {
         LOG.debug("L2 cache(Mb) : {}, Mark : {}", cache, className);
         LOG.debug("CPU power is : {}, Married : {}", cpuPower, married);
         LOG.debug("Summary income : {}, Married : {}", income, married);
+        LOG.debug("Sell order closed with (USD) : {}, Profit : {}", sell, income);
     }
 }
