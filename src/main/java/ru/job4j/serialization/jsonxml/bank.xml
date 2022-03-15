@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- В XML нет определенного синтаксиса для описания коллекции элементов -->
+<!-- Поэтому пишут так, добавляя окончание s или es, что говорит о том что это коллекция -->
+<!-- <account number="7777777"/> - это пример сокращенной записи -->
+
+<bank name="JuniorsBank" commercial="true" capitalization="564548551">
+    <account number="7777777"/>
+    <services>
+        <service>deposit</service>
+        <service>mortgage</service>
+    </services>
+</bank>
