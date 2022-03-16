@@ -3,8 +3,18 @@ package ru.job4j.serialization.jsonxml;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+
 /**
  * 2. Формат JSON.
+ * 4. JAXB. Преобразование XML в POJO.
  *
  * Для работы с json мы использовали
  * библиотеку Gson. Она позволяет
@@ -21,10 +31,25 @@ import com.google.gson.GsonBuilder;
  * 4.Модифицируем json-строку,
  * приводим в читабельный вид.
  *
- * @author Constantine on 13.03.2022
+ * Вариант с использованием XML.
+ *
+ * 1.Получаем контекст для доступа
+ * к АПИ {@link JAXBContext}.
+ * 2.Создаем сериализатор
+ * {@link javax.xml.bind.Marshaller}.
+ * 3.Указываем, что нам нужно
+ * форматирование (JAXB_FORMATTED_OUTPUT).
+ * 4.В блоке try производим сериализацию
+ * {@link Marshaller#marshal(Object, File)}.
+ *
+ * standalone="yes" - обозначает,
+ * что в файле XML имеется вложение
+ * (вложенный класс в нашем примере).
+ *
+ * @author Constantine on 15.03.2022
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JAXBException, IOException {
         final Bank bank = new Bank("JuniorsBank", true,
                 564548551, new Account(7777777),
                 new String[] {"deposit", "mortgage"});
@@ -44,5 +69,22 @@ public class Main {
                         + "}";
         final Bank bankMod = gson.fromJson(bankJson, Bank.class);
         System.out.println(bankMod);
+        System.out.println(System.lineSeparator());
+        System.out.println("----- SERIALIZATION -----");
+        JAXBContext context = JAXBContext.newInstance(Bank.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        String xml = "";
+        try (StringWriter writer = new StringWriter()) {
+            marshaller.marshal(bank, writer);
+            xml = writer.getBuffer().toString();
+            System.out.println(xml);
+        }
+        System.out.println("----- DESERIALIZATION -----");
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        try (StringReader reader = new StringReader(xml)) {
+            Bank result = (Bank) unmarshaller.unmarshal(reader);
+            System.out.println(result);
+        }
     }
 }
