@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * 2. Формат JSON.
  * 4. JAXB. Преобразование XML в POJO.
+ * 5. Преобразование JSON в POJO. JsonObject.
  *
  * Данный класс описывает счета
  * банка {@link Bank}.
@@ -40,6 +41,10 @@ public class Account {
 
     public Account(int number) {
         this.number = number;
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     @Override

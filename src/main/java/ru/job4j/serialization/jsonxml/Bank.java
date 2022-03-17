@@ -6,6 +6,7 @@ import java.util.Arrays;
 /**
  * 2. Формат JSON.
  * 4. JAXB. Преобразование XML в POJO.
+ * 5. Преобразование JSON в POJO. JsonObject.
  *
  * Данный класс описывает банк.
  * У него есть имя, капитализация,
@@ -75,6 +76,26 @@ public class Bank {
         this.capitalization = capitalization;
         this.account = account;
         this.services = services;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isCommercial() {
+        return commercial;
+    }
+
+    public int getCapitalization() {
+        return capitalization;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public String[] getServices() {
+        return services;
     }
 
     @Override
