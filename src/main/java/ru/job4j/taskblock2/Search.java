@@ -17,12 +17,20 @@ public interface Search {
     /**
      * Данный метод является методом по
      * умолчанию и находит файлы по
-     * полному совпадению в имени файла.
+     * неполному совпадению. То есть,
+     * если строка начинается с той фразы,
+     * которую мы записали, - она (строка/наш файл)
+     * будет записан в список.
+     *
+     * Сделал, чтобы полностью не
+     * дублировать код с кодом класса
+     * {@link SearchName}.
      *
      * Чтобы разбить функционал на
      * классы по шаблону "Стратегия",
      * пришлось написать метод по
-     * умолчанию и его в классах менять.
+     * умолчанию и его в классах менять
+     * (с помощью имплементации).
      *
      * Пришлось так сделать, потому
      * что метод должен возвращать
@@ -41,7 +49,7 @@ public interface Search {
      * @return список совпадений.
      */
     default List<String> search(Path root, String fileName) throws IOException {
-        Predicate<Path> pred = path -> path.toFile().toString().equals(fileName);
+        Predicate<Path> pred = path -> path.toFile().toString().startsWith(fileName);
         SearchFilesIO searcher = new SearchFilesIO(pred);
         Files.walkFileTree(root, searcher);
         return searcher.getFiles();
