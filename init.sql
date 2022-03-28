@@ -1,0 +1,4 @@
+CREATE USER Consta
+
+CREATE DATABASE amateurs
+		WITH OWNER = Consta
