@@ -86,7 +86,7 @@ WHERE t.name = 'dairy products';
 
 SELECT p.name
 FROM product AS p
-WHERE p.name LIKE '%Мороженое%';
+WHERE LOWER(p.name) LIKE '%морожен%';
 
 SELECT p.name, p.expired_date
 FROM product AS p
