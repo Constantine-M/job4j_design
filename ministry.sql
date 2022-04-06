@@ -76,3 +76,9 @@ WHERE e.department_id IS NOT null;
 SELECT n.name, g.gender
 FROM teens n
 CROSS JOIN teens g;
+
+SELECT n.name AS "Имя", 
+g.gender AS "Гендерный идентификатор",
+CONCAT_WS(' - ', n.name, g.gender) AS "Декартово множество"
+FROM teens n
+CROSS JOIN teens g;
