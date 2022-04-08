@@ -83,24 +83,10 @@ CONCAT_WS(' - ', n.name, g.gender) AS "Декартово множество"
 FROM teens n
 CROSS JOIN teens g;
 
--- Черновой вариант (не тот, что требуется)
 SELECT n1.name AS "первый из пары", 
-g1.gender AS "его гендер",
+n1.gender AS "его гендер",
 n2.name AS "второй из пары",
-g2.gender AS "его гендер"
+n2.gender AS "его гендер"
 FROM teens n1
-CROSS JOIN teens g1
 CROSS JOIN teens n2
-CROSS JOIN teens g2
-WHERE g1.gender != g2.gender;
-
--- Тоже не то, но хотя бы понять, верное ли направление
-SELECT n1.name AS "первый из пары", 
-g1.gender AS "его гендер",
-n2.name AS "второй из пары",
-g2.gender AS "его гендер"
-FROM teens n1
-CROSS JOIN teens g1
-CROSS JOIN teens n2
-CROSS JOIN teens g2 (SELECT DISTINCT g.gender FROM teens AS g) AS g2
-WHERE g1.gender <> g2.gender;
+WHERE n1.gender <> n2.gender;
