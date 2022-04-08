@@ -100,3 +100,12 @@ FROM car
 RIGHT JOIN transmission AS tr
 ON car.transmission_id = tr.id
 WHERE transmission_id IS null;
+
+/*Такой способ гораздо более наглядый*/
+SELECT  
+b.name AS "Кузов", 
+count(c.name)
+FROM car c
+RIGHT JOIN body AS b
+ON c.body_id = b.id
+group by b.name;
