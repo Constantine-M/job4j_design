@@ -1,8 +1,6 @@
 package ru.job4j.io.fileconfig;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -51,21 +49,32 @@ public class Config {
      * 5.С помощью {@link Matcher#find()}
      * я находил эти групы и добавлял
      * в карту.
+     *
+     * UPDATE
+     * Я добавил {@link ClassLoader},
+     * но при этом не понимаю, работает
+     * он или нет. Это должно нас
+     * избавить от использования
+     * абсолютных путей.
      */
     public void load() {
+        ClassLoader loader = Config.class.getClassLoader();
         Pattern pattern = Pattern.compile("(.*)=(.*)|(.*)=(^$)");
-        try (BufferedReader read = new BufferedReader(new FileReader(this.path))) {
-            String text;
-            while ((text = read.readLine()) != null) {
-                if (!text.isEmpty() && !text.startsWith("#")) {
-                    Matcher matcher = pattern.matcher(text);
-                    if (matcher.find()) {
-                        values.put(matcher.group(1), matcher.group(2));
+        if (loader.getResourceAsStream("app.properties") != null) {
+            try (BufferedReader read = new BufferedReader(
+                    new InputStreamReader(loader.getResourceAsStream("app.properties")))) {
+                String text;
+                while ((text = read.readLine()) != null) {
+                    if (!text.isEmpty() && !text.startsWith("#")) {
+                        Matcher matcher = pattern.matcher(text);
+                        if (matcher.find()) {
+                            values.put(matcher.group(1), matcher.group(2));
+                        }
                     }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -76,7 +85,7 @@ public class Config {
      */
     public String value(String key) {
         if (!values.containsKey(key)) {
-            throw new IllegalArgumentException("Key is not found! Fail to parsed the key from file.");
+            throw new IllegalArgumentException("Key is not found! Fail to parse the key from file.");
         }
         return values.get(key);
     }
