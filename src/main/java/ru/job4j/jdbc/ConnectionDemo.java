@@ -2,9 +2,7 @@ package ru.job4j.jdbc;
 
 import ru.job4j.io.fileconfig.Config;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -43,58 +41,68 @@ import java.util.Properties;
  * мы можем получить информацию
  * о БД и ее внутренней структуре.
  *
- * В методе
- * {@link ConnectionDemo#writeProperties}
+ * 7.В методе {@link Properties#setProperty}
  * пробовал вместо url, login, password
  * вставить url + properties, т.к.
  * создал отдельный объект и думал,
  * что подтянет оттуда то, чего
  * не хватает. Оказывается, что нет -
- * не подтянет. Чтобы подтянуло,
- * нужно url записать так:
+ * не подтянет.
+ *
+ * Чтобы подтянуло, нужно url записать так:
  * String url = "jdbc:postgresql:
- * //localhost/test?user=fred
+ * /localhost/test?user=fred
  * &password=secret&ssl=true", где
  * props.setProperty("user","fred");
  * props.setProperty("password","secret");
  * props.setProperty("ssl","true");
  *
- * В методе {@link ConnectionDemo#main}
- * не совсем понятно, нужно ли
- * использовать абсолютный путь для
- * записи properties. Я решил
- * использовать.
+ * UPDATE
+ * Спасибо за подсказки!
+ * Т.к. я уже залез в {@link Properties},
+ * то используем этот класс и его
+ * методы. Метод {@link Properties#load}
+ * делает то же самое, что и метод
+ * {@link Config#load()} - мы указываем,
+ * какой файл читать, сохраняем
+ * записи в объект класса
+ * {@link Properties}, а потом
+ * достаем по нужным ключам
+ * интересующие нас значения.
  *
  * @author Constantine on 10.04.2022
  */
 public class ConnectionDemo {
 
-    public static void writeProperties(String url, String login, String password, String target) throws ClassNotFoundException {
-        Properties properties = new Properties();
-        properties.setProperty("login", login);
-        properties.setProperty("password", password);
-        try (Connection connection = DriverManager.getConnection(url, login, password);
-            PrintWriter out = new PrintWriter(new FileWriter(target))) {
-            DatabaseMetaData metaData = connection.getMetaData();
-            out.println("driverVersion=" + metaData.getDriverVersion());
-            out.println("driverName=" + metaData.getDriverName());
-            out.println("login=" + metaData.getUserName());
-            out.println("password=" + properties.get("password"));
-            out.println("url=" + metaData.getURL());
-        } catch (SQLException s) {
-            s.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException {
+        Properties config = new Properties();
+        try (InputStream in = ConnectionDemo.class.getResourceAsStream("app.properties")) {
+            config.load(in);
         }
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
-        Class.forName("org.postgresql.Driver");
-        String url = "jdbc:postgresql://localhost:5432/idea_db";
-        String login = "postgres";
-        String password = "Okhorzina2912";
-        String target = "C:\\projects\\job4j_design\\app.properties";
-        writeProperties(url, login, password, target);
-        System.out.println(new Config("app.properties"));
+        Class.forName(config.getProperty("driver"));
+        try (Connection connection = DriverManager.getConnection(
+                config.getProperty("url"),
+                config.getProperty("login"),
+                config.getProperty("password"));
+             PrintWriter out = new PrintWriter(System.out)) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            out.println(metaData.getUserName());
+            out.println(metaData.getURL());
+            out.println(metaData.getDriverName());
+            out.println(metaData.getDriverVersion());
+        }
+/*        Settings settings = new Settings();
+        Class.forName(settings.getValue("driver"));
+        try (Connection connection = DriverManager.getConnection(
+                settings.getValue("url"),
+                settings.getValue("login"),
+                settings.getValue("password"));
+             PrintWriter out = new PrintWriter(System.out)) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            out.println(metaData.getUserName());
+            out.println(metaData.getURL());
+            out.println(metaData.getDriverName());
+            out.println(metaData.getDriverVersion());
+        }*/
     }
 }
