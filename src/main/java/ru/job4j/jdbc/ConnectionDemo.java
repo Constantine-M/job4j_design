@@ -70,13 +70,24 @@ import java.util.Properties;
  * достаем по нужным ключам
  * интересующие нас значения.
  *
+ * Объект {@link ClassLoader} можно
+ * создать как отдельно, так и
+ * внутри блока try(). Главное -
+ * не забыть. Вот ключевые слова:
+ * <твой класс>.class.getClassLoader.
+ *
+ * {@link ClassLoader} можно
+ * представить в виде потока.
+ * Для этого используем метод
+ * {@link ClassLoader#getResourceAsStream}.
+ *
  * @author Constantine on 10.04.2022
  */
 public class ConnectionDemo {
 
     public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException {
         Properties config = new Properties();
-        try (InputStream in = ConnectionDemo.class.getResourceAsStream("app.properties")) {
+        try (InputStream in = ConnectionDemo.class.getClassLoader().getResourceAsStream("app.properties")) {
             config.load(in);
         }
         Class.forName(config.getProperty("driver"));
@@ -91,18 +102,5 @@ public class ConnectionDemo {
             out.println(metaData.getDriverName());
             out.println(metaData.getDriverVersion());
         }
-/*        Settings settings = new Settings();
-        Class.forName(settings.getValue("driver"));
-        try (Connection connection = DriverManager.getConnection(
-                settings.getValue("url"),
-                settings.getValue("login"),
-                settings.getValue("password"));
-             PrintWriter out = new PrintWriter(System.out)) {
-            DatabaseMetaData metaData = connection.getMetaData();
-            out.println(metaData.getUserName());
-            out.println(metaData.getURL());
-            out.println(metaData.getDriverName());
-            out.println(metaData.getDriverVersion());
-        }*/
     }
 }

@@ -10,7 +10,6 @@ import static org.hamcrest.Matchers.*;
  * @author Constantine on 12.01.2022
  */
 public class ConfigTest {
-    @Ignore
     @Test
     public void whenPairWithoutComment() {
         String path = "./data/pair_without_comment.properties";
@@ -20,7 +19,6 @@ public class ConfigTest {
         assertThat(config.value("surname"), is(""));
     }
 
-    @Ignore
     @Test
     public void whenPairWithCommentsAndStrings() {
         String path = "./data/pair_with_comments_and_empty_strings.properties";
@@ -29,7 +27,6 @@ public class ConfigTest {
         assertThat(config.value("car"), is("Honda Accord"));
     }
 
-    @Ignore
     @Test (expected = IllegalArgumentException.class)
     public void whenPairWithCommentsAndWrongTemplateInKeyPart() {
         String path = "./data/pair_with_comments_and_wrong_template.properties";

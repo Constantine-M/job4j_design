@@ -49,32 +49,21 @@ public class Config {
      * 5.С помощью {@link Matcher#find()}
      * я находил эти групы и добавлял
      * в карту.
-     *
-     * UPDATE
-     * Я добавил {@link ClassLoader},
-     * но при этом не понимаю, работает
-     * он или нет. Это должно нас
-     * избавить от использования
-     * абсолютных путей.
      */
     public void load() {
-        ClassLoader loader = Config.class.getClassLoader();
         Pattern pattern = Pattern.compile("(.*)=(.*)|(.*)=(^$)");
-        if (loader.getResourceAsStream("app.properties") != null) {
-            try (BufferedReader read = new BufferedReader(
-                    new InputStreamReader(loader.getResourceAsStream("app.properties")))) {
-                String text;
-                while ((text = read.readLine()) != null) {
-                    if (!text.isEmpty() && !text.startsWith("#")) {
-                        Matcher matcher = pattern.matcher(text);
-                        if (matcher.find()) {
-                            values.put(matcher.group(1), matcher.group(2));
-                        }
+        try (BufferedReader read = new BufferedReader(new FileReader(this.path))) {
+            String text;
+            while ((text = read.readLine()) != null) {
+                if (!text.isEmpty() && !text.startsWith("#")) {
+                    Matcher matcher = pattern.matcher(text);
+                    if (matcher.find()) {
+                        values.put(matcher.group(1), matcher.group(2));
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -102,6 +91,6 @@ public class Config {
     }
 
     public static void main(String[] args) {
-        System.out.println(new Config("app.properties"));
+        System.out.println(new Config("./src/main/resources/app.properties"));
     }
 }
