@@ -1,6 +1,5 @@
 package ru.job4j.jdbc.statement;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,34 +18,41 @@ import java.util.StringJoiner;
  */
 public class TableEditor implements AutoCloseable {
 
+    private Properties properties;
+
     private Connection connection;
 
-    public TableEditor() throws SQLException, IOException, ClassNotFoundException {
+    /**
+     * В данный конструктор мы передаем
+     * файл "properties" - это будет уже
+     * загруженый файл.
+     * Особенность в том, что мы
+     * можем загружать различные
+     * файлы настроек.
+     *
+     * @param properties файл с настройками.
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public TableEditor(Properties properties) throws SQLException, ClassNotFoundException {
+        this.properties = properties;
         initConnection();
     }
 
-    private Connection initConnection() throws IOException, SQLException, ClassNotFoundException {
-        Properties properties = new Properties();
-        try (InputStream in = TableEditor.class.getClassLoader().getResourceAsStream("app.properties")) {
-            properties.load(in);
-        }
+    private void initConnection() throws SQLException, ClassNotFoundException {
         Class.forName(properties.getProperty("driver"));
         connection = DriverManager.getConnection(
                 properties.getProperty("url"),
                 properties.getProperty("login"),
                 properties.getProperty("password"));
-        return connection;
     }
 
     private void executeStatement(String sql) {
-        try (Connection connection = initConnection()) {
             try (Statement statement = connection.createStatement()) {
                 statement.executeUpdate(sql);
-            }
-        } catch (IOException | SQLException | ClassNotFoundException e) {
+            } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -54,7 +60,7 @@ public class TableEditor implements AutoCloseable {
      * без столбцов с указанным именем.
      * @param tableName наименование таблицы.
      */
-    public void createTable(String tableName) throws SQLException, IOException, ClassNotFoundException {
+    public void createTable(String tableName) {
         String sql = String.format("CREATE TABLE IF NOT EXISTS %s();", tableName);
         executeStatement(sql);
     }
@@ -114,7 +120,6 @@ public class TableEditor implements AutoCloseable {
      * @return отображение таблицы в консоли.
      */
     public String getTableScheme(String tableName) throws Exception {
-        Connection connection = initConnection();
         var rowSeparator = "|"
                 .concat("-".repeat(15))
                 .concat("|")
@@ -145,31 +150,45 @@ public class TableEditor implements AutoCloseable {
     }
 
     public static void main(String[] args) throws Exception {
-        TableEditor tableEditor = new TableEditor();
+        Properties properties = new Properties();
+        try (InputStream in = TableEditor.class.getClassLoader().getResourceAsStream("app.properties")) {
+            properties.load(in);
+        }
         System.out.println("CREATE TABLE");
-        tableEditor.createTable("systems");
         System.out.println("↓");
-        System.out.println(tableEditor.getTableScheme("systems"));
+        try (TableEditor editor = new TableEditor(properties)) {
+            editor.createTable("systems");
+            System.out.println(editor.getTableScheme("systems"));
+        }
         System.out.println(System.lineSeparator());
         System.out.println("ADD COLUMN");
         System.out.println("↓");
-        tableEditor.addColumn("systems", "id", "serial");
-        tableEditor.addColumn("systems", "name", "varchar(255)");
-        tableEditor.addColumn("systems", "place", "varchar(255)");
-        System.out.println(tableEditor.getTableScheme("systems"));
+        try (TableEditor editor = new TableEditor(properties)) {
+            editor.addColumn("systems", "id", "serial");
+            editor.addColumn("systems", "name", "varchar(255)");
+            editor.addColumn("systems", "place", "varchar(255)");
+            System.out.println(editor.getTableScheme("systems"));
+        }
         System.out.println(System.lineSeparator());
         System.out.println("DROP COLUMN \"PLACE\"");
-        tableEditor.dropColumn("systems", "place");
-        System.out.println(tableEditor.getTableScheme("systems"));
+        System.out.println("↓");
+        try (TableEditor editor = new TableEditor(properties)) {
+            editor.dropColumn("systems", "place");
+            System.out.println(editor.getTableScheme("systems"));
+        }
         System.out.println(System.lineSeparator());
         System.out.println("RENAME COLUMN \"NAME\"");
         System.out.println("↓");
-        tableEditor.renameColumn("systems", "name", "developer");
-        System.out.println(tableEditor.getTableScheme("systems"));
+        try (TableEditor editor = new TableEditor(properties)) {
+            editor.renameColumn("systems", "name", "developer");
+            System.out.println(editor.getTableScheme("systems"));
+        }
         System.out.println(System.lineSeparator());
         System.out.println("DROP TABLE");
         System.out.println("↓");
-        tableEditor.dropTable("systems");
-        System.out.println("THERE'S NOTHING TO SEE");
+        try (TableEditor editor = new TableEditor(properties)) {
+            editor.dropTable("systems");
+            System.out.println("THERE'S NOTHING TO SEE");
+        }
     }
 }
