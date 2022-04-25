@@ -149,44 +149,50 @@ public class TableEditor implements AutoCloseable {
         }
     }
 
+    /**
+     * В данном методе используем
+     * конструкцию try-with-resources,
+     * т.к. наш класс объявлен
+     * {@link AutoCloseable}.
+     * Создаем {@link TableEditor}
+     * один раз, используя конструкцию
+     * выше, а внутри производим
+     * все-все-все манипуляции с таблицей.
+     * После этого соединение автоматически
+     * закрывается.
+     *
+     * НЕ НУЖНО плодить {@link TableEditor}.
+     */
     public static void main(String[] args) throws Exception {
         Properties properties = new Properties();
         try (InputStream in = TableEditor.class.getClassLoader().getResourceAsStream("app.properties")) {
             properties.load(in);
         }
-        System.out.println("CREATE TABLE");
-        System.out.println("↓");
         try (TableEditor editor = new TableEditor(properties)) {
+            System.out.println("CREATE TABLE");
+            System.out.println("↓");
             editor.createTable("systems");
             System.out.println(editor.getTableScheme("systems"));
-        }
-        System.out.println(System.lineSeparator());
-        System.out.println("ADD COLUMN");
-        System.out.println("↓");
-        try (TableEditor editor = new TableEditor(properties)) {
+            System.out.println(System.lineSeparator());
+            System.out.println("ADD COLUMN");
+            System.out.println("↓");
             editor.addColumn("systems", "id", "serial");
             editor.addColumn("systems", "name", "varchar(255)");
             editor.addColumn("systems", "place", "varchar(255)");
             System.out.println(editor.getTableScheme("systems"));
-        }
-        System.out.println(System.lineSeparator());
-        System.out.println("DROP COLUMN \"PLACE\"");
-        System.out.println("↓");
-        try (TableEditor editor = new TableEditor(properties)) {
+            System.out.println(System.lineSeparator());
+            System.out.println("DROP COLUMN \"PLACE\"");
+            System.out.println("↓");
             editor.dropColumn("systems", "place");
             System.out.println(editor.getTableScheme("systems"));
-        }
-        System.out.println(System.lineSeparator());
-        System.out.println("RENAME COLUMN \"NAME\"");
-        System.out.println("↓");
-        try (TableEditor editor = new TableEditor(properties)) {
+            System.out.println(System.lineSeparator());
+            System.out.println("RENAME COLUMN \"NAME\"");
+            System.out.println("↓");
             editor.renameColumn("systems", "name", "developer");
             System.out.println(editor.getTableScheme("systems"));
-        }
-        System.out.println(System.lineSeparator());
-        System.out.println("DROP TABLE");
-        System.out.println("↓");
-        try (TableEditor editor = new TableEditor(properties)) {
+            System.out.println(System.lineSeparator());
+            System.out.println("DROP TABLE");
+            System.out.println("↓");
             editor.dropTable("systems");
             System.out.println("THERE'S NOTHING TO SEE");
         }
