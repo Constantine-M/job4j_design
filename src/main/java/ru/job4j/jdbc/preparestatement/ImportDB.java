@@ -1,7 +1,5 @@
 package ru.job4j.jdbc.preparestatement;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.Import;
-
 import java.io.*;
 import java.sql.*;
 import java.util.*;
