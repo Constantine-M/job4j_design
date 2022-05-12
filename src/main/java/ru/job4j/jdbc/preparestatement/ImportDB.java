@@ -1,5 +1,7 @@
 package ru.job4j.jdbc.preparestatement;
 
+import com.sun.xml.bind.v2.schemagen.xmlschema.Import;
+
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -15,7 +17,7 @@ import java.util.regex.Pattern;
  *
  * @author Constantine on 09.05.2022
  */
-public class ImportDB {
+public class ImportDB implements AutoCloseable {
 
     private Properties cfg;
 
@@ -27,6 +29,13 @@ public class ImportDB {
         this.cfg = cfg;
         this.dump = dump;
         initConnection();
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (connection != null) {
+            connection.close();
+        }
     }
 
     private void initConnection() throws SQLException, ClassNotFoundException {
@@ -74,6 +83,15 @@ public class ImportDB {
         }
     }
 
+    public void dropTable() {
+        String sql = "DROP TABLE IF EXISTS spammers";
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static class User {
 
         String name;
@@ -95,7 +113,7 @@ public class ImportDB {
      * 2.Присвоить имя и почту объекту
      * класса User.
      *
-     * Сделал так:
+     * Можно было так:
      * 1.Написал regex, чтобы разбить строку.
      * 2.Использовал {@link HashMap}, чтобы
      * записать туда имя и почту.
@@ -105,22 +123,29 @@ public class ImportDB {
      * 4.Прошелся по карте и заполнил
      * список пользователей.
      *
+     * А можно как сейчас:
+     * 1.С помощью Stream API, используя
+     * метод {@link String#split(String)}.
+     * 2.Проверяем, что поля имени и почты
+     * в строке не пустые. Напомню, что
+     * в строке через ";" прописаны
+     * имя и почта спамера.
+     * 3.Если пустые - выбрасываем исключение.
+     * 4.Добавляем пользователя,
+     * если все есть.
+     *
      * @return список спаммеров.
      */
     public List<User> load() {
-        Map<String, String> values = new HashMap<>();
         List<User> users = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(dump))) {
-            String text;
-            Pattern pattern = Pattern.compile("([^;]*);([^;]*)");
-            while ((text = reader.readLine()) != null) {
-                Matcher matcher = pattern.matcher(text);
-                if (matcher.find()) {
-                    values.put(matcher.group(1), matcher.group(2));
+            reader.lines().forEach(line -> {
+                String[] array = line.split(";", 2);
+                if (array[0].isEmpty() || array[1].isEmpty()) {
+                    throw new IllegalArgumentException("Name or email not found. Please, check name/email pair!");
                 }
-            }
-            values.forEach((k, v) -> users.add(new User(k, v)));
-            /*reader.lines().forEach(user -> users.add(new User()));*/
+                users.add(new User(array[0], array[1]));
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -149,7 +174,11 @@ public class ImportDB {
             e.printStackTrace();
         }
         String dump = "C:\\projects\\job4j_design\\data\\dump.txt";
-        ImportDB db = new ImportDB(cfg, dump);
-        db.save(db.load());
+        try (ImportDB db = new ImportDB(cfg, dump)) {
+            db.dropTable();
+            db.save(db.load());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
