@@ -1,4 +1,4 @@
-package ru.job4j.gc;
+package ru.job4j.gc.example;
 
 /**
  * 0. Понятие сборки мусора.
