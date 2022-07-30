@@ -43,25 +43,9 @@ public class Demonstration {
      */
     public static void main(String[] args) {
         info();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 95000; i++) {
             new User(i, "user" + i, i + 1);
         }
-        /*List<User> users = List.of(
-                new User(12, "Consta", 73),
-                new User(21, "Alex", 21),
-                new User(43, "Lily", 99),
-                new User(99, "Olga", 3),
-                new User(54, "Jerry", 50),
-                new User(32, "Gocha", 88),
-                new User(81, "Anna", 23),
-                new User(3, "Diana", 0),
-                new User(6, "Veider", 1),
-                new User(17, "Luke", 68)
-        );
-        users.forEach(System.out::println);*/
-        System.out.println("RUNNING GARBAGE COLLECTOR...");
-        System.out.print(System.lineSeparator());
-        System.gc();
         info();
     }
 }
