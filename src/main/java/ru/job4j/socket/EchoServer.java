@@ -89,7 +89,7 @@ import java.util.Scanner;
  * только логгер!
  *
  * P.S. To check out your service,
- * enter <http: localhost:9000/?msg=Hello>
+ * enter <a href="http://localhost:9000/?msg=Hello">local</a>a>
  * in your browser.
  * Better use the Internet Explorer
  * browser!!!

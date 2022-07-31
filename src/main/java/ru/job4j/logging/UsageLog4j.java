@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * SLF использует шаблон проектирования
  * - фасад. Шаблон фасад упрощает АПИ
  * логгеров. Почитать тут:
- * https:  refactoring.guru/ru/design-patterns/facade
+ * <a href="https://refactoring.guru/ru/design-patterns/facade"></a>
  *
  * Оператор плюс (+) для String создает
  * в памяти новую строку. Это плохо,

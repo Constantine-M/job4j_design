@@ -11,7 +11,7 @@ import java.util.Scanner;
  * вычленить только числа.
  *
  * Еще раз про {@link String#join} вот здесь
- * {@see <https:  javarush.ru/groups/posts/809-v-java-8-mozhno-obhhedinjatjh-stroki>}
+ * <a href="https://javarush.ru/groups/posts/809-v-java-8-mozhno-obhhedinjatjh-stroki"></a>
  *
  * @author Constantine on 20.02.2022
  */

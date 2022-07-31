@@ -15,7 +15,7 @@ import java.nio.file.Files;
  * В него будем записывать и его
  * будем читать. Почитать про ЭТО
  * можно по ссылке ниже:
- * {@see <https: junit.org/junit4/javadoc/4.9/org/junit/rules/TemporaryFolder.html>}.
+ * <a href="https://junit.org/junit4/javadoc/4.9/org/junit/rules/TemporaryFolder.html"></a>.
  *
  * @author Constantine on 21.02.2022
  */
