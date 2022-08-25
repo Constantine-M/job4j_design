@@ -10,17 +10,24 @@ import java.util.Objects;
  * поста (не тот пост, где нужно
  * отказаться от вкусной еды).
  *
+ * Замечание от ментора (за что спасибо):
+ * "Если есть возможность использовать
+ * примитивы, то их и используем.
+ * Обертки - объекты, занимают больше
+ * памяти и могут возникнуть  трудности
+ * при работе с ними (NPE, например)".
+ *
  * @author Constantine on 14.08.2022
  */
 public class Post {
 
-    private Integer id;
+    private int id;
 
     private String text;
 
     private List<Comment> comments;
 
-    public Post(Integer id, String text, List<Comment> comments) {
+    public Post(int id, String text, List<Comment> comments) {
         this.id = id;
         this.text = text;
         this.comments = comments;
@@ -35,7 +42,7 @@ public class Post {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

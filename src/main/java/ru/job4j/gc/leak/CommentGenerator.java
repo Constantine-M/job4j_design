@@ -27,6 +27,8 @@ public class CommentGenerator implements Generate {
 
     private List<Comment> comments = new ArrayList<>();
 
+    public static final int COUNT = 50;
+
     private List<String> phrases;
 
     private UserGenerator userGenerator;
@@ -69,7 +71,7 @@ public class CommentGenerator implements Generate {
                 .distinct()
                 .limit(3)
                 .forEach(ints::add);
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < COUNT; i++) {
             StringJoiner commentJoiner = new StringJoiner(" ");
             commentJoiner.add(phrases.get(ints.get(0)));
             commentJoiner.add(phrases.get(ints.get(1)));

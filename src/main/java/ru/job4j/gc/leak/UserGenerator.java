@@ -29,6 +29,8 @@ public class UserGenerator  implements Generate {
     public static final String PATH_SURNAMES = "data/gc/leak/files/surnames.txt";
     public static final String PATH_PATRONS = "data/gc/leak/files/patr.txt";
 
+    public static final int NEW_USERS = 1000;
+
     public static List<String> names;
     public static List<String> surnames;
     public static List<String> patrons;
@@ -47,7 +49,7 @@ public class UserGenerator  implements Generate {
     @Override
     public void generate() {
         users.clear();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < NEW_USERS; i++) {
             StringJoiner nameJoiner = new StringJoiner(" ");
             nameJoiner.add(surnames.get(random.nextInt(surnames.size())));
             nameJoiner.add(names.get(random.nextInt(names.size())));

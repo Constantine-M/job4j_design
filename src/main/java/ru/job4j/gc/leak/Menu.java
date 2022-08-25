@@ -10,6 +10,16 @@ import java.util.Scanner;
  */
 public class Menu {
 
+    public static final int ADD_POST = 1;
+    public static final int ADD_MANY_POST = 2;
+    public static final int SHOW_ALL_POSTS = 3;
+    public static final int DELETE_POST = 4;
+
+    public static final String SELECT = "Выберите меню: ";
+    public static final String COUNT = "Выберите количество создаваемых постов: ";
+    public static final String TEXT_OF_POST = "Введите текст: ";
+    public static final String EXIT = "Конец работы";
+
     /**
      * Строка в таком виде встречается,
      * если вы используете Java 15 и выше
@@ -59,28 +69,28 @@ public class Menu {
         boolean run = true;
         while (run) {
             System.out.println(MENU);
-            System.out.print("Выберите меню: ");
+            System.out.print(SELECT);
             int userChoice = Integer.parseInt(scanner.nextLine());
             System.out.println("Выбран пункт - " + userChoice);
-            if (1 == userChoice) {
-                System.out.println("Введите текст");
+            if (ADD_POST == userChoice) {
+                System.out.println(TEXT_OF_POST);
                 String text = scanner.nextLine();
                 createPost(commentGenerator, userGenerator, postStore, text);
-            } else if (2 == userChoice) {
-                System.out.println("Введите текст");
+            } else if (ADD_MANY_POST == userChoice) {
+                System.out.println(TEXT_OF_POST);
                 String text = scanner.nextLine();
-                System.out.println("Выберите количество создаваемых постов");
+                System.out.println(COUNT);
                 String count = scanner.nextLine();
                 for (int i = 0; i < Integer.parseInt(count); i++) {
                     createPost(commentGenerator, userGenerator, postStore, text);
                 }
-            } else if (3 == userChoice) {
+            } else if (SHOW_ALL_POSTS == userChoice) {
                 System.out.println(PostStore.getPosts());
-            } else if (4 == userChoice) {
+            } else if (DELETE_POST == userChoice) {
                 postStore.removeAll();
             } else {
                 run = false;
-                System.out.println("Конец работы");
+                System.out.println(EXIT);
             }
         }
     }

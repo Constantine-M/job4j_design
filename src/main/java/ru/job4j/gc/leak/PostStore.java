@@ -46,7 +46,7 @@ public class PostStore {
 
     private static Map<Integer, Post> posts = new HashMap<>();
 
-    private Integer id = 1;
+    private int id = 1;
 
     public Post add(Post post) {
         post.setId(id);
