@@ -43,15 +43,6 @@ public class Menu {
                 Введите любое другое число для выхода.
             """;
 
-    public static void main(String[] args) {
-        Random random = new Random();
-        UserGenerator userGenerator = new UserGenerator(random);
-        CommentGenerator commentGenerator = new CommentGenerator(random, userGenerator);
-        Scanner scanner = new Scanner(System.in);
-        PostStore postStore = new PostStore();
-        start(commentGenerator, scanner, userGenerator, postStore);
-    }
-
     /**
      * Данный метод инициализирует
      * запуск программы и саму программу.
@@ -85,7 +76,7 @@ public class Menu {
                     createPost(commentGenerator, userGenerator, postStore, text);
                 }
             } else if (SHOW_ALL_POSTS == userChoice) {
-                System.out.println(PostStore.getPosts());
+                System.out.println(postStore.getPosts());
             } else if (DELETE_POST == userChoice) {
                 postStore.removeAll();
             } else {
@@ -111,5 +102,14 @@ public class Menu {
         userGenerator.generate();
         commentGenerator.generate();
         postStore.add(new Post(text, commentGenerator.getComments()));
+    }
+
+    public static void main(String[] args) {
+        Random random = new Random();
+        UserGenerator userGenerator = new UserGenerator(random);
+        CommentGenerator commentGenerator = new CommentGenerator(random, userGenerator);
+        Scanner scanner = new Scanner(System.in);
+        PostStore postStore = new PostStore();
+        start(commentGenerator, scanner, userGenerator, postStore);
     }
 }
