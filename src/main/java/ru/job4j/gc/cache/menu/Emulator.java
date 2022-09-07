@@ -7,6 +7,11 @@ import java.util.Scanner;
 /**
  * 1. Реализация кеша на SoftReference.
  *
+ * Данный класс непосредственно
+ * реализаует работу кэша. Логика
+ * спрятана в других классах - здесь
+ * только демонстрация.
+ *
  * @author Constantine on 28.08.2022
  */
 public class Emulator {
@@ -24,6 +29,12 @@ public class Emulator {
                 Введите любое другое число для выхода.
             """;
 
+    private static final int SELECT_DIR = 1;
+
+    private static final int LOAD_TO_CACHE = 2;
+
+    private static final int GET_FROM_CACHE = 3;
+
     /**
      * Данное поле описывает выбор
      * пользователя. Эта переменная
@@ -36,22 +47,23 @@ public class Emulator {
     private static String userChoiceDir;
 
     private static void run(DirFileCache dirFileCache, Scanner scanner) {
+        String ls = System.lineSeparator();
         boolean run = true;
         while (run) {
             System.out.println(MENU);
             System.out.print(SELECT);
             int userChoice = Integer.parseInt(scanner.nextLine());
-            System.out.println("Выбран пункт - " + userChoice);
+            System.out.println("Выбран пункт - " + userChoice + ls);
             switch (userChoice) {
-                case 1 -> {
+                case SELECT_DIR -> {
                     System.out.print(DIRECTORY);
                     userChoiceDir = scanner.nextLine();
                 }
-                case 2 -> {
-                    dirFileCache.put(userChoiceDir, "something");
+                case LOAD_TO_CACHE -> {
+                    dirFileCache.get(userChoiceDir);
                 }
-                case 3 -> {
-                    System.out.println(dirFileCache.get(userChoiceDir));
+                case GET_FROM_CACHE -> {
+                    System.out.println(dirFileCache.get(userChoiceDir) + ls);
                 }
                 default -> {
                     run = false;

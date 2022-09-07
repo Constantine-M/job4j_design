@@ -42,31 +42,30 @@ public abstract class AbstractCache<K, V> {
      * использовали метод
      * {@link Map#getOrDefault}.
      * По дефолту возвращаем безопасную
-     * ссылку.
-     * 2.Далее проверяем, что кеш не null,
-     * потому что GC мог их стереть.
-     * Если безопасная ссылка еще
-     * существует, то получаем данные по ней.
-     * В методе не стыкуется - мы зачем-то
-     * дважды ищем безопасную ссылку...
-     * Во второй раз просто есть
-     * дефолтный отход.
+     * ссылку на null.
+     * 2.Далее проверяем, что кеш (данные,
+     * которые мы получили по безопасной
+     * ссылке) не null, потому что GC мог
+     * их стереть.
      * 3.Если кеш = null, то загружаем
      * данные по ключу.
+     *
+     * Здесь мы работаем только с
+     * сильной ссылкой. Безопасная
+     * ссылка заложена в методе
+     * {@link AbstractCache#put}.
      *
      * @param key ключ получения объекта кеша.
      * @return данные, которые мы получаем
      * по безопасной ссылке.
      */
     public V get(K key) {
-        SoftReference<V> softRef = cache.get(key);
-        if (softRef != null) {
-            softRef = cache.getOrDefault(key, softRef);
-        } else {
-            System.out.println("File not found in cache..Loading now!");
-            put(key, load(key));
+        V value = cache.getOrDefault(key, new SoftReference<>(null)).get();
+        if (value == null) {
+            value = load(key);
+            put(key, value);
         }
-        return softRef.get();
+        return value;
     }
 
     /**
