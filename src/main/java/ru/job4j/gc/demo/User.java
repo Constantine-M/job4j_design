@@ -1,7 +1,5 @@
 package ru.job4j.gc.demo;
 
-import org.openjdk.jol.info.ClassLayout;
-
 /**
  * 1. Демонстрация работы GC.
  *

@@ -1,8 +1,5 @@
 package ru.job4j.gc.demo;
 
-import org.openjdk.jol.info.ClassLayout;
-import org.openjdk.jol.vm.VM;
-
 import java.util.List;
 
 /**
