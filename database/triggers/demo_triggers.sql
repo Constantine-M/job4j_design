@@ -55,12 +55,22 @@ create trigger tax_trigger
     for each statement
 execute procedure tax();
 
-create or replace function new_tax()
+-- Далее скрипты по задаче.
+-- 1й и 2й триггеры выполняют одно и то же действие (меняют цену),
+-- но на разных уровнях (statement и row) и в разных условиях (до вставки и после).
+-- После вставки таблица обновляется и, чтобы взять оттуда данные, мы используем переходное
+-- отношение inserted, и в функции берем данные из него.
+-- В случае с row, мы берем данные, используя NEW/OLD.
+-- До вставки в таблицу нам нечего обновлять, поэтому команду update убираем и
+-- для изменения просто используем NEW.
+
+create or replace function tax_after_inserted()
     returns trigger as
 $$
 BEGIN
     update triggers.products
-    set price = price + price * 0.2;
+    set price = price + price * 0.2
+    where id = (select id from inserted);
     return new;
 END;
 $$
@@ -70,13 +80,23 @@ create trigger new_tax_trigger
     after insert on triggers.products
     referencing new table as inserted
     for each statement
-execute procedure new_tax();
+execute procedure tax_after_inserted();
+
+create or replace function tax_before_insert()
+    returns trigger as
+$$
+BEGIN
+    new.price = new.price + new.price * 0.2;
+    return new;
+END;
+$$
+    LANGUAGE 'plpgsql';
 
 create trigger tax_trigger_before_insert
     before insert
     on triggers.products
     for each row
-execute procedure new_tax();
+execute procedure tax_before_insert();
 
 create table triggers.history_of_price (
     id serial primary key,
