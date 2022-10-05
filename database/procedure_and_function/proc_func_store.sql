@@ -98,35 +98,14 @@ $$;
 select f_update_data(10, 0, 1);
 
 -- Скрипты по задаче.
--- Процедура удаления записи.
+-- Заполним таблицу произвольными данными.
 
 call insert_data('hlebushek', 'producer_1', 25, 270);
 call insert_data('milk', 'producer_2', 4, 32);
 call insert_data('whisky', 'producer_3', 5, 230);
 call insert_data('cola', 'producer_3', 10, 54);
 
--- Вот так почему-то не работает.
--- Ругается: "ERROR: missing FROM-clause entry for table "products"".
--- Видимо я неверно сравниваю поле со значением аргумента на входе процедуры.
--- Либо так вообще не работает/нельзя делать. Примеров найти не удалось.
--- Хотел, чтобы сравнивались значения полей с аргументами, а потом принималось решение
--- об удалении записей.
-
-create or replace procedure delete_data_procedure(d_count integer, d_id integer, d_price integer)
-    language 'plpgsql'
-as $$
-BEGIN
-    if triggers.products.count < d_count THEN
-        delete from triggers.products where id = d_id;
-    ELSE
-        if triggers.products.price > d_price THEN
-            delete from triggers.products where id = d_id;
-        end if;
-    end if;
-END;
-$$;
-
--- Вот так работает.
+-- Процедура удаления записи.
 
 create or replace procedure delete_data_procedure(d_count integer, d_id integer, d_price integer)
     language 'plpgsql'
