@@ -100,36 +100,36 @@ select f_update_data(10, 0, 1);
 -- Скрипты по задаче.
 -- Заполним таблицу произвольными данными.
 
-call insert_data('hlebushek', 'producer_1', 25, 270);
-call insert_data('milk', 'producer_2', 4, 32);
-call insert_data('whisky', 'producer_3', 5, 230);
-call insert_data('cola', 'producer_3', 10, 54);
+delete from triggers.products;
+ALTER SEQUENCE triggers.products_id_seq RESTART WITH 1;
+
+call insert_data('hlebushek', 'commodity', 25, 270);
+call insert_data('milk', 'commodity', 4, 32);
+call insert_data('whisky', 'alcohol', 15, 230);
+call insert_data('wine', 'alcohol', 10, 54);
 
 -- Процедура удаления записи.
+-- Данная процедура удаляет алкоголь в праздничные дни, иначе удаляет товары повседневного спроса.
 
-create or replace procedure delete_data_procedure(d_count integer, d_id integer, d_price integer)
+create or replace procedure delete_data_procedure(feast boolean)
     language 'plpgsql'
 as $$
 BEGIN
-    if d_count < 5 THEN
-        delete from triggers.products where id = d_id;
-    end if;
-    if d_price > 250 THEN
-        delete from triggers.products where id = d_id;
+    if feast is true THEN
+        delete from triggers.products where producer = 'alcohol';
+    else
+        delete from triggers.products where producer = 'commodity';
     end if;
 END;
 $$;
 
-call delete_data_procedure(5, 1, 270);
+call delete_data_procedure(true);
 
 -- Функция удаления записи.
--- Пока что не понимаю смысла в IF, если можно удалить указав условие в блоке WHERE.
--- Скорее всего, такие конструкции нужны для более комплексных запросов.
--- С блоком ELSE должно быть всё понятнее. Так мы можем расставить приоритеты,
--- потому что если на вход подадим count=4 и name=hlebushek, то вернется все равно 4.
--- Если count=10 и name=hlebushek, то молоко все равно удалится. Молоко обречено..
+-- Данная функция удаляет только товары ежедневного спроса дороже 100 (не все товары дороже 100).
+-- Возвращает кол-во удаленных товаров.
 
-create or replace function f_delete_data(d_count integer, d_name varchar, d_id integer)
+create or replace function f_delete_data(d_price integer)
     returns integer
     language 'plpgsql'
 as
@@ -137,19 +137,32 @@ $$
 declare
     result integer;
 begin
-    if d_count < 5 THEN
-        select into result count from triggers.products where id = d_id;
-        delete from triggers.products where id = d_id;
-    else
-        if d_name = 'hlebushek' THEN
-            delete from triggers.products where id = d_id;
-            select into result sum(count) from triggers.products;
-        end if;
+    select into result sum(count) from triggers.products;
+    if (select producer from triggers.products limit 1) = 'commodity' THEN
+        delete from triggers.products where price > d_price;
+        result = result - (select sum(count) from triggers.products);
     end if;
     return result;
-end;
+end
 $$;
 
 -- Вызов функции.
 
-select f_delete_data(4, 'cola', 2);
+select f_delete_data(100);
+
+-- Тестовая функция из инета (не работает).
+
+create or replace function test_function()
+    returns setof record
+    language plpgsql as $$
+declare
+    rec record;
+begin
+    for rec in
+        select producer from triggers.products
+        loop
+            return next rec;
+        end loop;
+end $$;
+
+select test_function();
