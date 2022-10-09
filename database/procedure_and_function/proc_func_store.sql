@@ -1,3 +1,13 @@
+drop table triggers.products;
+
+create table products (
+                          id serial primary key,
+                          name varchar(50),
+                          producer varchar(50),
+                          count integer default 0,
+                          price integer
+);
+
 -- Here's the stored procedure.
 -- Это пример хранимой процедуры.
 
@@ -126,7 +136,7 @@ $$;
 call delete_data_procedure(true);
 
 -- Функция удаления записи.
--- Данная функция удаляет только товары ежедневного спроса дороже 100 (не все товары дороже 100).
+-- Данная функция удаляет только товары ежедневного спроса (commodity) дороже 100.
 -- Возвращает кол-во удаленных товаров.
 
 create or replace function f_delete_data(d_price integer)
@@ -136,12 +146,18 @@ as
 $$
 declare
     result integer;
+    pp triggers.products%rowtype;
 begin
     select into result sum(count) from triggers.products;
-    if (select producer from triggers.products limit 1) = 'commodity' THEN
-        delete from triggers.products where price > d_price;
-        result = result - (select sum(count) from triggers.products);
-    end if;
+    for pp in (select * from triggers.products where producer = 'commodity')
+        loop
+            if pp.price > d_price then
+                delete from triggers.products
+                where id = pp.id
+                  and producer = 'commodity';
+            end if;
+        end loop;
+    result = result - (select sum(count) from triggers.products);
     return result;
 end
 $$;
@@ -149,20 +165,3 @@ $$;
 -- Вызов функции.
 
 select f_delete_data(100);
-
--- Тестовая функция из инета (не работает).
-
-create or replace function test_function()
-    returns setof record
-    language plpgsql as $$
-declare
-    rec record;
-begin
-    for rec in
-        select producer from triggers.products
-        loop
-            return next rec;
-        end loop;
-end $$;
-
-select test_function();
