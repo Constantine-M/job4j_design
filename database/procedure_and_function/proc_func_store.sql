@@ -152,9 +152,7 @@ begin
     for pp in (select * from triggers.products where producer = 'commodity')
         loop
             if pp.price > d_price then
-                delete from triggers.products
-                where id = pp.id
-                  and producer = 'commodity';
+                delete from triggers.products where id = pp.id;
             end if;
         end loop;
     result = result - (select sum(count) from triggers.products);
