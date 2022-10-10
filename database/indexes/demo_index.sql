@@ -14,11 +14,11 @@ create index people_last_name on index.people(last_name desc);
 -- Чтобы изменить индекс, воспользуемся командой ALTER.
 -- Например, переименуем индекс.
 
-alter index people_last_name rename to people_last_name_desc;
+alter index index.people_last_name rename to people_last_name_desc;
 
 -- Чтобы удалить индекс.
 
-drop index people_last_name;
+drop index index.people_last_name;
 
 delete from index.people;
 alter sequence index.people_id_seq RESTART WITH 1;
