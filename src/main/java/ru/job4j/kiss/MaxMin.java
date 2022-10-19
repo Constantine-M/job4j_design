@@ -2,6 +2,7 @@ package ru.job4j.kiss;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiPredicate;
 
 /**
  * Данный класс описывает поиск
@@ -19,27 +20,33 @@ public class MaxMin {
     }
 
     /**
-     * Полагаю, что здесь нужно написать итератор,
-     * потому что нам нужно что-то с чем-то
-     * сравнивать. А в текущем виде у нас есть
-     * только текущий объект в списке.
-     * Следующий объект мы взять не можем.
-     *
-     * Либо вложенный цикл, который начнется
-     * с следующего элемента. В таком случае
-     * мы сможем 2 элемента сравнить.
-     *
-     * Либо, нам нужно имплементировать
-     * интерфейс {@link Comparable} и
-     * переопределить метод compareTo.
+     * Данный метод производит сравнение.
+     * В {@link BiPredicate} поступает 2
+     * аргумента - это наш объект и
+     * компаратор, кторый будет сравнивать.
+     * Получается, нам нужно все таки написать
+     * свой компаратор (просто чтоб был), а в
+     * методах min/max менять на тот, что передаем
+     * в метод.
+     * {@link BiPredicate} без аргументов не
+     * работает. Значит, нам нужно добавить во
+     * входные параметры компаратор, чтобы
+     * потом его можно было поменять на другой.
      */
-    /*public <T> T uniMethod(List<T> value) {
-        Comparator<T> cmp = () -> {
-            for (int i = 0; i < value.size(); i++) {
-                for (int j = 0; j < value.size() - 1; j++) {
-                    int resCmp = value.get(i).compareTo(value.get(j));
-                }
+    /*public <T> T uniMethod(List<T> list, BiPredicate<T, Comparator<T>> pred) {
+        validate(list);
+        T result = list.get(0);
+        for (T value : list) {
+            if (pred.test(value, missing argument - have to use some Comparator)) {
+                result = value;
             }
         }
+        return result;
     }*/
+
+    private <T> void validate(List<T> list) {
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException("List is empty!");
+        }
+    }
 }
