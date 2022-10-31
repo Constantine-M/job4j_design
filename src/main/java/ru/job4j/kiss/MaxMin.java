@@ -25,12 +25,10 @@ public class MaxMin {
      * @param <T> объект
      */
     public <T> T max(List<T> value, Comparator<T> comparator) {
-        validate(value);
         return compare(value, (a, b) -> comparator.compare(a, b) < 0);
     }
 
     public <T> T min(List<T> value, Comparator<T> comparator) {
-        validate(value);
         return compare(value, (a, b) -> comparator.compare(a, b) > 0);
     }
 

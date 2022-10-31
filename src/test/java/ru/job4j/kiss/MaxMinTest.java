@@ -42,12 +42,8 @@ class MaxMinTest {
         MaxMin value = new MaxMin();
         List<String> list = List.of();
         Comparator<String> cmp = String::compareTo;
-        assertThatThrownBy(() -> {
-            throw new IllegalArgumentException("List is empty!"); });
-        /*assertThatThrownBy(value.max(list, cmp)).isInstanceOf(IllegalArgumentException.class);
-        Exception exception = assertThrows(IllegalArgumentException.class () -> {
-            value.max(list, cmp);
-        });*/
+        assertThatThrownBy(() -> value.max(list, cmp))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     /**
