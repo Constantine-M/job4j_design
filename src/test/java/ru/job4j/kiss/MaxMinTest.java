@@ -1,6 +1,7 @@
 package ru.job4j.kiss;
 
 import org.junit.jupiter.api.Test;
+import ru.job4j.ood.kiss.MaxMin;
 
 import java.util.Comparator;
 import java.util.List;
