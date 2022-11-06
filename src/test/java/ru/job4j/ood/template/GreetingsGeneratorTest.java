@@ -9,13 +9,13 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
+@Disabled
 class GreetingsGeneratorTest {
 
     String template = "Call me ${hero}, and you, ${mortal}, isn't it?";
     Map<String, String> map = new HashMap<>();
     GreetingsGenerator generator = new GreetingsGenerator();
 
-    @Disabled
     @Test
     public void whenGetCompleteTemplate() {
         map.put("hero", "Hagrid");
@@ -29,7 +29,6 @@ class GreetingsGeneratorTest {
      * Here is the "commoner" key instead
      * of "mortal".
      */
-    @Disabled
     @Test
     public void whenAnyKeyIsInvalidThenThrowException() {
         map.put("hero", "Hagrid");
@@ -41,7 +40,6 @@ class GreetingsGeneratorTest {
     /**
      * Here is map has 1 pair instead of 2 pairs.
      */
-    @Disabled
     @Test
     public void whenMapHasOnePairThenException() {
         map.put("hero", "Hagrid");
@@ -53,7 +51,6 @@ class GreetingsGeneratorTest {
      * Here is map has 3 pairs.
      * One pair extra.
      */
-    @Disabled
     @Test
     public void whenMapHasExtraPairsThenException() {
         map.put("hero", "Hagrid");
