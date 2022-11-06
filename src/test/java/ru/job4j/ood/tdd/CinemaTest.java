@@ -10,9 +10,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled
 class CinemaTest {
 
-    @Disabled
     @Test
     public void whenBuyThenGetTicket() {
         Account account = new AccountCinema();
@@ -22,7 +22,6 @@ class CinemaTest {
         assertThat(ticket).isEqualTo(new Ticket3D());
     }
 
-    @Disabled
     @Test
     public void whenAddSessionThenItExistsBetweenAllSessions() {
         Cinema cinema = new Cinema3D();
@@ -32,7 +31,6 @@ class CinemaTest {
         assertThat(sessions).contains(session);
     }
 
-    @Disabled
     @Test
     public void whenBuyOnInvalidRowThenGetException() {
         Account account = new AccountCinema();
@@ -48,7 +46,6 @@ class CinemaTest {
      * Насколько я сообразил, column - это
      * место в зале.
      */
-    @Disabled
     @Test
     public void whenBuyOnInvalidColumnThenGetException() {
         Account account = new AccountCinema();
@@ -64,7 +61,6 @@ class CinemaTest {
      * Я купил билет. А потом, если снова захочу
      * купить, то должно вылететь исключение.
      */
-    @Disabled
     @Test
     public void whenBuyTicketForOccupiedSeatThenGetException() {
         Account account = new AccountCinema();
@@ -82,7 +78,6 @@ class CinemaTest {
      * ожидать того, что он есть,
      * и проводить действия с ним.
      */
-    @Disabled
     @Test
     public void whenSessionNotFound() {
         Cinema cinema = new Cinema3D();
@@ -102,7 +97,6 @@ class CinemaTest {
      * А сеанс (интерфейс и класс)
      * пустой.
      */
-    @Disabled
     @Test
     public void whenBuyTicketOnInvalidDate() {
         Account account = new AccountCinema();
