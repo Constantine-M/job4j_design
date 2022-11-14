@@ -24,10 +24,6 @@ public class AccountingReport implements Report {
 
     private CurrencyConverter converter;
 
-    private Currency source;
-
-    private Currency target;
-
     /**
      * Добавил в конструктор
      * {@link CurrencyConverter}. Без
@@ -37,16 +33,11 @@ public class AccountingReport implements Report {
      *                       Переводит дату и время в
      *                       удобный формат.
      * @param converter конвертер валюты.
-     * @param source из какой валюты конвертировать.
-     * @param target в какую валюту конвертировать.
      */
-    public AccountingReport(Store store, DateTimeParser<Calendar> dateTimeParser,
-                            CurrencyConverter converter, Currency source, Currency target) {
+    public AccountingReport(Store store, DateTimeParser<Calendar> dateTimeParser, CurrencyConverter converter) {
         this.store = store;
         this.dateTimeParser = dateTimeParser;
         this.converter = converter;
-        this.source = source;
-        this.target = target;
     }
 
     @Override
@@ -58,7 +49,7 @@ public class AccountingReport implements Report {
             text.append(employee.getName()).append(" ")
                     .append(dateTimeParser.parse(employee.getHired())).append(" ")
                     .append(dateTimeParser.parse(employee.getFired())).append(" ")
-                    .append(converter.convert(source, employee.getSalary(), target))
+                    .append(converter.convert(Currency.RUB, employee.getSalary(), Currency.USD))
                     .append(System.lineSeparator());
         }
         return text.toString();

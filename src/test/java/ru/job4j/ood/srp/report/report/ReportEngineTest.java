@@ -1,6 +1,5 @@
 package ru.job4j.ood.srp.report.report;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.job4j.ood.srp.report.currency.Currency;
 import ru.job4j.ood.srp.report.currency.CurrencyConverter;
@@ -48,8 +47,9 @@ class ReportEngineTest {
         DateTimeParser<Calendar> parser = new ReportDateTimeParser();
         CurrencyConverter converter = new InMemoryCurrencyConverter();
         Employee worker = new Employee("CJ", now, now, 170000);
+        double convertResult = converter.convert(Currency.RUB, worker.getSalary(), Currency.USD);
         store.add(worker);
-        Report engine = new AccountingReport(store, parser, converter, Currency.RUB, Currency.USD);
+        Report engine = new AccountingReport(store, parser, converter);
         StringBuilder expect = new StringBuilder()
                 .append("Name; Hired; Fired; Salary;")
                 .append(System.lineSeparator())
@@ -93,7 +93,10 @@ class ReportEngineTest {
         assertThat(engine.generate(em -> true)).isEqualTo(expect.toString());
     }
 
-    @Disabled
+    /**
+     * Данный тест проверяет, что
+     * отчет сгенерировался в формате CSV.
+     */
     @Test
     public void whenDevReportGenerated() {
         MemStore store = new MemStore();
@@ -101,10 +104,9 @@ class ReportEngineTest {
         Employee cj = new Employee("CJ", now, now, 100000.123);
         Employee sweet = new Employee("Sweet", now, now, 160000.456);
         DateTimeParser<Calendar> parser = new ReportDateTimeParser();
-        String target = "projects\\job4j_design\\data\\report";
         store.add(cj);
         store.add(sweet);
-        Report engine = new DevCSVReport(store, parser, target);
+        Report engine = new DevCSVReport(store, parser);
         StringBuilder expect = new StringBuilder()
                 .append("Name;Hired;Fired;Salary;")
                 .append(System.lineSeparator())
