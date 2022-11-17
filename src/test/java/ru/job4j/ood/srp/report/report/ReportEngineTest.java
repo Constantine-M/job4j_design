@@ -47,9 +47,8 @@ class ReportEngineTest {
         DateTimeParser<Calendar> parser = new ReportDateTimeParser();
         CurrencyConverter converter = new InMemoryCurrencyConverter();
         Employee worker = new Employee("CJ", now, now, 170000);
-        double convertResult = converter.convert(Currency.RUB, worker.getSalary(), Currency.USD);
         store.add(worker);
-        Report engine = new AccountingReport(store, parser, converter);
+        Report engine = new AccountingReport(store, parser, converter, Currency.USD);
         StringBuilder expect = new StringBuilder()
                 .append("Name; Hired; Fired; Salary;")
                 .append(System.lineSeparator())
@@ -108,7 +107,7 @@ class ReportEngineTest {
         store.add(sweet);
         Report engine = new DevCSVReport(store, parser);
         StringBuilder expect = new StringBuilder()
-                .append("Name;Hired;Fired;Salary;")
+                .append("Name;Hired;Fired;Salary")
                 .append(System.lineSeparator())
                 .append(cj.getName()).append(";")
                 .append(parser.parse(cj.getHired())).append(";")
