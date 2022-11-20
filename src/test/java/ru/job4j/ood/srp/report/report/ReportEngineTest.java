@@ -1,5 +1,6 @@
 package ru.job4j.ood.srp.report.report;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.job4j.ood.srp.report.currency.Currency;
 import ru.job4j.ood.srp.report.currency.CurrencyConverter;
@@ -7,8 +8,10 @@ import ru.job4j.ood.srp.report.currency.InMemoryCurrencyConverter;
 import ru.job4j.ood.srp.report.formatter.DateTimeParser;
 import ru.job4j.ood.srp.report.formatter.ReportDateTimeParser;
 import ru.job4j.ood.srp.report.model.Employee;
+import ru.job4j.ood.srp.report.model.Employees;
 import ru.job4j.ood.srp.report.store.MemStore;
 
+import javax.xml.bind.JAXBException;
 import java.util.Calendar;
 import java.util.Comparator;
 
@@ -119,6 +122,21 @@ class ReportEngineTest {
                 .append(parser.parse(sweet.getFired())).append(";")
                 .append(sweet.getSalary())
                 .append(System.lineSeparator());
+        assertThat(engine.generate(em -> true)).isEqualTo(expect.toString());
+    }
+
+    @Disabled
+    @Test
+    public void whenXMLReportGenerated() throws JAXBException {
+        MemStore store = new MemStore();
+        Calendar now = Calendar.getInstance();
+        Employee cj = new Employee("CJ", now, now, 100);
+        Employee consta = new Employee("Consta", now, now, 130);
+        DateTimeParser<Calendar> parser = new ReportDateTimeParser();
+        store.add(cj);
+        store.add(consta);
+        Report engine = new XMLReport(store, parser);
+        StringBuilder expect = new StringBuilder();
         assertThat(engine.generate(em -> true)).isEqualTo(expect.toString());
     }
 }
