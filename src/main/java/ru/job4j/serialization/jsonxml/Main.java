@@ -65,6 +65,7 @@ import java.util.List;
  */
 public class Main {
     public static void main(String[] args) throws JAXBException, IOException {
+        System.out.println("----- POJO to JSONObject EXAMPLE FROM JSON-String -----");
         final Bank bank = new Bank("JuniorsBank", true,
                 564548551, new Account(7777777),
                 new String[] {"deposit", "mortgage"});
@@ -102,12 +103,12 @@ public class Main {
             System.out.println(result);
         }
         System.out.println(System.lineSeparator());
+        System.out.println("----- POJO to JSONObject EXAMPLE -----");
         JSONObject account = new JSONObject("{\"number\":\"7777777\"}");
         List<String> list = new ArrayList<>();
         list.add("JuniorsBank");
         list.add("MiddlesBank");
         JSONArray services = new JSONArray(list);
-        System.out.println("----- POJO to JSONObject EXAMPLE -----");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", bank.getName());
         jsonObject.put("commercial", bank.isCommercial());
