@@ -1,5 +1,7 @@
 package ru.job4j.ood.srp.report.report;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.JSONObject;
 import ru.job4j.ood.srp.report.model.Employee;
 import ru.job4j.ood.srp.report.model.Employees;
@@ -32,17 +34,8 @@ public class JSONReport implements Report {
     @Override
     public String generate(Predicate<Employee> filter) {
         Employees employees = new Employees(store.findBy(filter));
-        List<JSONObject> jsonList = new ArrayList<>();
-        for (Employee servant : employees.getEmployees()) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name", servant.getName());
-            jsonObject.put("hired", servant.getHired().getTime());
-            jsonObject.put("fired", servant.getFired().getTime());
-            jsonObject.put("salary", servant.getSalary());
-            jsonList.add(jsonObject);
-        }
-        StringBuilder report = appendJsonsFromList(jsonList);
-        return report.toString();
+        Gson lib = new GsonBuilder().create();
+        return lib.toJson(employees);
     }
 
     /**

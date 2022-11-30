@@ -1,6 +1,5 @@
 package ru.job4j.ood.srp.report.report;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import ru.job4j.ood.srp.report.currency.Currency;
 import ru.job4j.ood.srp.report.currency.CurrencyConverter;
@@ -160,19 +159,20 @@ class ReportEngineTest {
         StringBuilder expect = new StringBuilder()
                 .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
                 .append("\n")
-                .append("<employee name=")
+                .append("<employees>").append("\n")
+                .append("    ").append("<employees name=")
                 .append("\"").append(cj.getName()).append("\"").append(" ")
                 .append("hired=").append("\"").append(parser.parse(date)).append("\"").append(" ")
                 .append("fired=").append("\"").append(parser.parse(date)).append("\"").append(" ")
                 .append("salary=").append("\"").append(cj.getSalary()).append("\"").append("/>")
                 .append("\n")
-                .append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-                .append("\n")
-                .append("<employee name=")
+                .append("    ").append("<employees name=")
                 .append("\"").append(consta.getName()).append("\"").append(" ")
                 .append("hired=").append("\"").append(parser.parse(date)).append("\"").append(" ")
                 .append("fired=").append("\"").append(parser.parse(date)).append("\"").append(" ")
                 .append("salary=").append("\"").append(consta.getSalary()).append("\"").append("/>")
+                .append("\n")
+                .append("</employees>")
                 .append("\n");
         assertThat(engine.generate(em -> true)).isEqualTo(expect.toString());
     }
@@ -205,24 +205,35 @@ class ReportEngineTest {
         store.add(sweet);
         Report engine = new JSONReport(store);
         StringBuilder expect = new StringBuilder()
-                .append("{").append("\"").append("fired").append("\"").append(":")
-                .append("\"").append(cj.getFired().getTime()).append("\"").append(",")
-                .append("\"").append("name").append("\"").append(":")
-                .append("\"").append(cj.getName()).append("\"").append(",")
-                .append("\"").append("hired").append("\"").append(":")
-                .append("\"").append(cj.getHired().getTime()).append("\"").append(",")
-                .append("\"").append("salary").append("\"").append(":")
-                .append(cj.getSalary()).append("}")
-                .append(System.lineSeparator())
-                .append("{").append("\"").append("fired").append("\"").append(":")
-                .append("\"").append(sweet.getFired().getTime()).append("\"").append(",")
-                .append("\"").append("name").append("\"").append(":")
-                .append("\"").append(sweet.getName()).append("\"").append(",")
-                .append("\"").append("hired").append("\"").append(":")
-                .append("\"").append(sweet.getHired().getTime()).append("\"").append(",")
-                .append("\"").append("salary").append("\"").append(":")
-                .append(sweet.getSalary()).append("}")
-                .append(System.lineSeparator());
+                .append("{\"employees\":[")
+                .append("{\"name\":\"").append(cj.getName()).append("\",")
+                .append("\"hired\":{\"year\":").append(date.get(Calendar.YEAR)).append(",")
+                .append("\"month\":").append(date.get(Calendar.MONTH)).append(",")
+                .append("\"dayOfMonth\":").append(date.get(Calendar.DAY_OF_MONTH)).append(",")
+                .append("\"hourOfDay\":").append(date.get(Calendar.HOUR_OF_DAY)).append(",")
+                .append("\"minute\":").append(date.get(Calendar.MINUTE)).append(",")
+                .append("\"second\":").append(date.get(Calendar.SECOND)).append("}").append(",")
+                .append("\"fired\":{\"year\":").append(date.get(Calendar.YEAR)).append(",")
+                .append("\"month\":").append(date.get(Calendar.MONTH)).append(",")
+                .append("\"dayOfMonth\":").append(date.get(Calendar.DAY_OF_MONTH)).append(",")
+                .append("\"hourOfDay\":").append(date.get(Calendar.HOUR_OF_DAY)).append(",")
+                .append("\"minute\":").append(date.get(Calendar.MINUTE)).append(",")
+                .append("\"second\":").append(date.get(Calendar.SECOND)).append("}").append(",")
+                .append("\"salary\":").append(cj.getSalary()).append("}").append(",")
+                .append("{\"name\":\"").append(sweet.getName()).append("\",")
+                .append("\"hired\":{\"year\":").append(date.get(Calendar.YEAR)).append(",")
+                .append("\"month\":").append(date.get(Calendar.MONTH)).append(",")
+                .append("\"dayOfMonth\":").append(date.get(Calendar.DAY_OF_MONTH)).append(",")
+                .append("\"hourOfDay\":").append(date.get(Calendar.HOUR_OF_DAY)).append(",")
+                .append("\"minute\":").append(date.get(Calendar.MINUTE)).append(",")
+                .append("\"second\":").append(date.get(Calendar.SECOND)).append("}").append(",")
+                .append("\"fired\":{\"year\":").append(date.get(Calendar.YEAR)).append(",")
+                .append("\"month\":").append(date.get(Calendar.MONTH)).append(",")
+                .append("\"dayOfMonth\":").append(date.get(Calendar.DAY_OF_MONTH)).append(",")
+                .append("\"hourOfDay\":").append(date.get(Calendar.HOUR_OF_DAY)).append(",")
+                .append("\"minute\":").append(date.get(Calendar.MINUTE)).append(",")
+                .append("\"second\":").append(date.get(Calendar.SECOND)).append("}").append(",")
+                .append("\"salary\":").append(sweet.getSalary()).append("}]}");
         assertThat(engine.generate(em -> true)).isEqualTo(expect.toString());
     }
 }

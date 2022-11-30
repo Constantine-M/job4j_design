@@ -25,24 +25,32 @@ public class XMLReport implements Report {
 
     private Marshaller marshaller;
 
-    public XMLReport(Store store) throws JAXBException {
+    public XMLReport(Store store) {
         this.store = store;
         loadJAXBLib();
     }
 
+    /**
+     * Данный метод сериализует сразу
+     * весь список (коллекцию) объектов. Поэтому
+     * мы и создавали класс {@link Employees}.
+     * В нем добавили аннотацию "XmlRootElement".
+     * Он выступает в качестве класса-обертки,
+     * потому что коллекции не имеют аннотаций.
+     * @param filter условия/е выборки сотрудников.
+     * @return сериализованный список.
+     */
     @Override
     public String generate(Predicate<Employee> filter) {
         Employees employees = new Employees(store.findBy(filter));
-        StringBuilder xml = new StringBuilder();
-        for (Employee servant : employees.getEmployees()) {
-            try (StringWriter writer = new StringWriter()) {
-                marshaller.marshal(servant, writer);
-                xml.append(writer.getBuffer().toString());
-            } catch (IOException | JAXBException e) {
-                throw new IllegalArgumentException(e);
-            }
+        String xml = "";
+        try (StringWriter writer = new StringWriter()) {
+            marshaller.marshal(employees, writer);
+            xml = writer.getBuffer().toString();
+        } catch (IOException | JAXBException e) {
+            throw new IllegalArgumentException(e);
         }
-        return xml.toString();
+        return xml;
     }
 
     private void loadJAXBLib() {
@@ -52,6 +60,7 @@ public class XMLReport implements Report {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         } catch (JAXBException e) {
             LOG.error("Loading JAXB library failed! ", e);
+            throw new IllegalArgumentException();
         }
     }
 }
