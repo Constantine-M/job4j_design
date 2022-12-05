@@ -1,10 +1,10 @@
 package ru.job4j.ood.lsp.storegoods.store;
 
-import ru.job4j.ood.lsp.storegoods.control.ControlQuality;
+
+import ru.job4j.ood.lsp.storegoods.control.ExpirationCalculator;
 import ru.job4j.ood.lsp.storegoods.food.Food;
 
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.Calendar;
 
 /**
  * Данный класс описывает
@@ -14,20 +14,46 @@ import java.util.function.Predicate;
  */
 public class Shop extends AbstractStore {
 
-    private ControlQuality controlQuality;
+    private static final byte EXPIRATION_PROGRESS_LOW_LIMIT = 25;
 
-    @Override
-    public Food add(Food food) {
-        return super.add(food);
+    private static final byte EXPIRATION_PROGRESS_HIGH_LIMIT = 75;
+
+    /**
+     * Скидка в процентах. Вынес в отдельное
+     * поле, чтобы при изменении скидки
+     * не рефакторить методы, а только
+     * значение поля изменить.
+     */
+    private final static double DISCOUNT = 30;
+
+    private final ExpirationCalculator<Calendar> expCalculator;
+
+    public Shop(ExpirationCalculator<Calendar> expCalculator) {
+        this.expCalculator = expCalculator;
     }
 
+    /**
+     * Хотел использовать здесь
+     * модный switch-expressions,
+     * но он не подошел.
+     */
     @Override
-    public boolean delete(Food food) {
-        return super.delete(food);
+    protected boolean isNotExpired(Food food) {
+        boolean result = false;
+        double curExpProgress = expCalculator.calculateInPercent(food.getCreateDate(), food.getExpiryDate());
+        if (curExpProgress > EXPIRATION_PROGRESS_LOW_LIMIT
+            && curExpProgress < EXPIRATION_PROGRESS_HIGH_LIMIT) {
+            result = true;
+        } else if (curExpProgress >= EXPIRATION_PROGRESS_HIGH_LIMIT) {
+            setDiscountedPrice(food);
+            result = true;
+        }
+        return result;
     }
 
-    @Override
-    public List<Food> findAll(Predicate<Food> filter) {
-        return super.findAll(filter);
+    private void setDiscountedPrice(Food food) {
+        food.setDiscount(DISCOUNT);
+        double newPrice = food.getPrice() - (food.getPrice() * (DISCOUNT / 100));
+        food.setPrice(newPrice);
     }
 }

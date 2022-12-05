@@ -21,9 +21,13 @@ public abstract class AbstractStore implements Store {
     private final List<Food> listFood = new ArrayList<>();
 
     @Override
-    public Food add(Food food) {
-        listFood.add(food);
-        return food;
+    public boolean add(Food food) {
+        boolean result = false;
+        if (isNotExpired(food)) {
+            listFood.add(food);
+            result = true;
+        }
+        return result;
     }
 
     @Override
@@ -54,4 +58,16 @@ public abstract class AbstractStore implements Store {
             throw new IllegalArgumentException("List of foods is empty!");
         }
     }
+
+    /**
+     * Данный метод делает проверку
+     * срока годности.
+     *
+     * У каждой реализации {@link AbstractStore}
+     * будет своя реализация данного метода.
+     * @param food передаваемый в метод продукт.
+     * @return true, если срок годности не истек,
+     *          иначе false.
+     */
+    protected abstract boolean isNotExpired(Food food);
 }

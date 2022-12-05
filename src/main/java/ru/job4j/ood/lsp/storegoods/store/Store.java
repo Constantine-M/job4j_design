@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  */
 public interface Store {
 
-    Food add(Food food);
+    boolean add(Food food);
 
     boolean delete(Food food);
 

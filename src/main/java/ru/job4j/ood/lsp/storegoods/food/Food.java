@@ -9,7 +9,7 @@ import java.util.Calendar;
  * на его основе реализованы остальные
  * продукты.
  */
-public class Food {
+public abstract class Food {
 
     private String name;
 
