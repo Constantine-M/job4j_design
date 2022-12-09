@@ -26,6 +26,6 @@ public class Trash extends AbstractStore {
     @Override
     protected boolean isNotExpired(Food food) {
         return expCalculator.calculateInPercent(
-                food.getCreateDate(), food.getExpiryDate()) == EXPIRATION_PROGRESS;
+                food.getCreateDate(), food.getExpiryDate()) >= EXPIRATION_PROGRESS;
     }
 }

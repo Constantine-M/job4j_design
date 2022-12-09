@@ -9,7 +9,7 @@ import java.util.Calendar;
  */
 public class CalendarExpirationCalculator implements ExpirationCalculator<Calendar> {
 
-    private static final Calendar CURRENT_DATE_TIME = Calendar.getInstance();
+    private final static long DAY_IN_MILLISECONDS = 86400000;
 
     /**
      * Данный метод показывает,
@@ -24,10 +24,11 @@ public class CalendarExpirationCalculator implements ExpirationCalculator<Calend
      */
     @Override
     public double calculateInPercent(Calendar startDate, Calendar endDate) {
+        Calendar currentDateTime = Calendar.getInstance();
         double result = 100;
-        if (CURRENT_DATE_TIME.compareTo(endDate) < 0) {
+        if (currentDateTime.compareTo(endDate) < 0) {
             long diffCreatedAndExp = diffInDays(startDate, endDate);
-            long diffCreatedAndCurrent = diffInDays(startDate, CURRENT_DATE_TIME);
+            long diffCreatedAndCurrent = diffInDays(startDate, currentDateTime);
             result = ((double) diffCreatedAndCurrent / (double) diffCreatedAndExp) * 100;
         }
         return result;
@@ -41,7 +42,6 @@ public class CalendarExpirationCalculator implements ExpirationCalculator<Calend
      * @return разница в днях.
      */
     private long diffInDays(Calendar first, Calendar second) {
-        return Math.abs(second.getTimeInMillis() - first.getTimeInMillis())
-                / (1000 * 60 * 60 * 24);
+        return Math.abs(second.getTimeInMillis() - first.getTimeInMillis()) / DAY_IN_MILLISECONDS;
     }
 }
