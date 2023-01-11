@@ -32,31 +32,12 @@ public abstract class AbstractStore implements Store {
 
     @Override
     public boolean delete(Food food) {
-        validate();
-        boolean result = false;
-        if (listFood.contains(food)) {
-            listFood.remove(food);
-            result = true;
-        }
-        return result;
+        return listFood.remove(food);
     }
 
     @Override
     public List<Food> findAll(Predicate<Food> filter) {
-        validate();
         return listFood.stream().filter(filter).toList();
-    }
-
-    /**
-     * Данный метод делает проверку
-     * списка. Считаю ее необходимой,
-     * но пока дальше проверки на
-     * пустоту не зашел.
-     */
-    private void validate() {
-        if (listFood.isEmpty()) {
-            throw new IllegalArgumentException("List of foods is empty!");
-        }
     }
 
     /**

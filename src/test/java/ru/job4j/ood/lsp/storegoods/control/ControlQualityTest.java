@@ -29,7 +29,7 @@ public class ControlQualityTest {
      * и тестируется. Вдруг он пригодится.
      * А чтобы тесты были актуальны всегда,
      * мы воспользуемся методами
-     * {@link Calendar#add} и
+     * {@link Calendar#add} или
      * {@link Calendar#roll}. Они добавляют
      * к текущей дате или убавляют.
      */
@@ -37,8 +37,8 @@ public class ControlQualityTest {
     public void whenProductSetToTrash() {
         Calendar created = Calendar.getInstance();
         Calendar expired = Calendar.getInstance();
-        expired.roll(Calendar.DAY_OF_MONTH, 15);
-        created.roll(Calendar.DAY_OF_MONTH, 20);
+        expired.add(Calendar.DAY_OF_MONTH, -1);
+        created.add(Calendar.DAY_OF_MONTH, 1);
         Food eggs = new Eggs("Eggs", expired, created, 10000, 0);
         List<Food> list = List.of(eggs);
         ExpirationCalculator<Calendar> calculator = new CalendarExpirationCalculator();
@@ -49,13 +49,13 @@ public class ControlQualityTest {
     }
 
     @Test
-    public void whenFirstProductSetToWarehouse() {
+    public void whenBeefProductSetToWarehouse() {
         var beefCreated = Calendar.getInstance();
         var beefExpired = Calendar.getInstance();
         var milkCreated = Calendar.getInstance();
         var milkExpired = Calendar.getInstance();
-       beefExpired.add(Calendar.MONTH, 1);
-       milkExpired.roll(Calendar.DAY_OF_MONTH, 1);
+       beefExpired.roll(Calendar.MONTH, true);
+       milkExpired.roll(Calendar.DAY_OF_MONTH, true);
         Food beef = new FrozenBeef("Beef", beefExpired, beefCreated, 4521, 0);
         Food milk = new Milk("Sour milk", milkExpired, milkCreated, 2000, 0);
         List<Food> list = List.of(beef, milk);
@@ -73,9 +73,9 @@ public class ControlQualityTest {
         Calendar beefExpired = Calendar.getInstance();
         Calendar pastaCreated = Calendar.getInstance();
         Calendar pastaExpired = Calendar.getInstance();
-        pastaCreated.roll(Calendar.DAY_OF_MONTH, 10);
-        pastaExpired.add(Calendar.DAY_OF_MONTH, 3);
-        beefExpired.add(Calendar.MONTH, 1);
+        pastaCreated.add(Calendar.DAY_OF_MONTH, -2);
+        pastaExpired.add(Calendar.DAY_OF_MONTH, 4);
+        beefExpired.roll(Calendar.MONTH, true);
         Food beef = new FrozenBeef("Beef", beefExpired, beefCreated, 4521, 0);
         Food pasta = new Pasta("Mama Mia", pastaExpired, pastaCreated, 100, 0);
         List<Food> list = List.of(beef, pasta);
@@ -88,14 +88,14 @@ public class ControlQualityTest {
     }
 
     @Test
-    public void whenProductExpirationIsGreaterThan75AndSetToShop() {
+    public void whenProductExpirationIsGreaterThan75AndSetToShopWithDiscount() {
         Calendar milkCreated = Calendar.getInstance();
         Calendar milkExpired = Calendar.getInstance();
         Calendar pastaCreated = Calendar.getInstance();
         Calendar pastaExpired = Calendar.getInstance();
-        pastaExpired.add(Calendar.MONTH, 1);
-        milkCreated.roll(Calendar.DAY_OF_MONTH, 10);
-        milkCreated.add(Calendar.DAY_OF_MONTH, 2);
+        pastaExpired.roll(Calendar.MONTH, true);
+        milkCreated.add(Calendar.DAY_OF_MONTH, -7);
+        milkExpired.add(Calendar.DAY_OF_MONTH, 2);
         Food milk = new Milk("Nemoloko", milkExpired, milkCreated, 100, 0);
         Food pasta = new Pasta("Mama Mia", pastaExpired, pastaCreated, 3442, 0);
         List<Food> list = List.of(milk, pasta);
@@ -112,6 +112,44 @@ public class ControlQualityTest {
     }
 
     /**
+     * Метод {@link Calendar#roll(int, boolean)}
+     * используется, если нам необходимо
+     * просто увеличить или уменьшить
+     * дату на единицу. Например, увеличить
+     * на месяц, на год, на день.
+     * НЕ НА КОНКРЕТНОЕ ЧИСЛО ДНЕЙ, МЕСЯЦЕВ, ЛЕТ,
+     * А НА ЕДИНИЦУ ВРЕМЕНИ (один день,
+     * один месяц, один год...).
+     * Чтобы увеличить, нужно передать в метод
+     * true, а чтобы уменьшить - false.
+     * Метод {@link Calendar#add(int, int)}
+     * используется, если нам необходимо
+     * увеличить/уменьшить дату на определенное
+     * кол-во часов, дней, месяцев, лет и т.д.
+     * Чтобы увеличить, в метод передаем
+     * положительное число, а чтобы уменьшить -
+     * отрицательное.
+     */
+    @Test
+    public void whenMilkExpirationIs100AndNotSetToShop() {
+        Calendar milkCreated = Calendar.getInstance();
+        Calendar milkExpired = Calendar.getInstance();
+        Calendar pastaCreated = Calendar.getInstance();
+        Calendar pastaExpired = Calendar.getInstance();
+        pastaExpired.add(Calendar.MONTH, 1);
+        milkCreated.add(Calendar.DAY_OF_MONTH, -7);
+        milkExpired.add(Calendar.DAY_OF_MONTH, -1);
+        Food milk = new Milk("Nemoloko", milkExpired, milkCreated, 100, 0);
+        Food pasta = new Pasta("Mama Mia", pastaExpired, pastaCreated, 3442, 0);
+        List<Food> list = List.of(milk, pasta);
+        ExpirationCalculator<Calendar> calculator = new CalendarExpirationCalculator();
+        Shop shop = new Shop(calculator);
+        ControlQuality control = new ControlQuality(List.of(shop));
+        control.distribute(list);
+        assertThat(shop.findAll(f -> f.getName().equals("Nemoloko"))).isNotIn(shop);
+    }
+
+    /**
      * Множественный assertThat - это
      * не есть хорошо. Если первый assertThat
      * завалится, то остальные не будут
@@ -125,11 +163,11 @@ public class ControlQualityTest {
     public void whenControlQualityDistributeAllProducts() {
         Calendar milkCreated = Calendar.getInstance();
         Calendar milkExpired = Calendar.getInstance();
-        milkCreated.roll(Calendar.DAY_OF_MONTH, 10);
-        milkExpired.roll(Calendar.DAY_OF_MONTH, 1);
+        milkCreated.add(Calendar.DAY_OF_MONTH, -10);
+        milkExpired.roll(Calendar.DAY_OF_MONTH, false);
         Calendar pastaCreated = Calendar.getInstance();
         Calendar pastaExpired = Calendar.getInstance();
-        pastaCreated.roll(Calendar.DAY_OF_MONTH, 10);
+        pastaCreated.add(Calendar.DAY_OF_MONTH, -10);
         pastaExpired.add(Calendar.DAY_OF_MONTH, 10);
         Calendar beefCreated = Calendar.getInstance();
         Calendar beefExpired = Calendar.getInstance();

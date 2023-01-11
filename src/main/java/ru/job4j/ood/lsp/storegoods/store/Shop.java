@@ -24,7 +24,7 @@ public class Shop extends AbstractStore {
      * не рефакторить методы, а только
      * значение поля изменить.
      */
-    private final static double DISCOUNT = 30;
+    private static final double DISCOUNT = 30;
 
     private final ExpirationCalculator<Calendar> expCalculator;
 
@@ -41,10 +41,10 @@ public class Shop extends AbstractStore {
     protected boolean isNotExpired(Food food) {
         boolean result = false;
         double curExpProgress = expCalculator.calculateInPercent(food.getCreateDate(), food.getExpiryDate());
-        if (curExpProgress > EXPIRATION_PROGRESS_LOW_LIMIT
-            && curExpProgress < EXPIRATION_PROGRESS_HIGH_LIMIT) {
+        if (curExpProgress >= EXPIRATION_PROGRESS_LOW_LIMIT
+            && curExpProgress <= EXPIRATION_PROGRESS_HIGH_LIMIT) {
             result = true;
-        } else if (curExpProgress >= EXPIRATION_PROGRESS_HIGH_LIMIT) {
+        } else if (curExpProgress >= EXPIRATION_PROGRESS_HIGH_LIMIT && curExpProgress != 100) {
             setDiscountedPrice(food);
             result = true;
         }
