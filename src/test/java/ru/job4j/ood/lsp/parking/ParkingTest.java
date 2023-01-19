@@ -14,10 +14,10 @@ import java.util.List;
  * 4.У легковых размер по умолчанию
  * должен быть = 1.
  * 5.У грузовых машин размер указываем.
- * 6.Скармливаем список машин
+ * 6.Скармливаем список машин через цикл
  * методу {@link Parking#park}.
- * 7.Если размер совпадает, то все
- * машины припарковались.
+ * 7.Если место на парковке закончилось,
+ * то метод {@link Parking#park} вернет false.
  */
 class ParkingTest {
 
@@ -60,7 +60,7 @@ class ParkingTest {
 
     @Test
     void whenTruckCantParked() {
-        Parking parking = new SurfaceParking(2, 3);
+        Parking parking = new SurfaceParking(2, 0);
         List<Transport> vehicles = List.of(
                 new Car("Lamborghini"),
                 new Car("Diablo")
@@ -71,7 +71,7 @@ class ParkingTest {
 
     @Test
     void whenSecondCarCantParked() {
-        Parking parking = new SurfaceParking(1, 3);
+        Parking parking = new SurfaceParking(1, 1);
         List<Transport> vehicles = List.of(
                 new Car("Vesta"),
                 new Truck("Iveco", 3)
@@ -88,7 +88,7 @@ class ParkingTest {
      */
     @Test
     void whenParkedOnlyTruck() {
-        Parking parking = new SurfaceParking(0, 5);
+        Parking parking = new SurfaceParking(0, 2);
         assertThat(parking.park(new Car("Mercedes"))).isFalse();
         assertThat(parking.park(new Truck("International", 5))).isTrue();
     }

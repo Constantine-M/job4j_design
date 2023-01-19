@@ -35,11 +35,11 @@ public class SurfaceParking implements Parking {
      * для грузовых авто нет, то
      * проверяем, есть ли места для
      * легковых. Если да, то занимаем
-     * место легковой в дополнение.
+     * места легковых машин в зависимости
+     * от размера грузового авто.
      * После этого выясняем, сколько
      * парковочных мест мы заняли у
-     * грузовых и легковых авто и
-     * уменьшаем счетчики.
+     * легковых авто и уменьшаем счетчик.
      * @param vehicle паркуемый транспорт
      * @return true, если транспорт
      * был успешно припаркован.
@@ -48,20 +48,13 @@ public class SurfaceParking implements Parking {
     public boolean park(Transport vehicle) {
         boolean result = false;
         int size = vehicle.getSize();
-        if (size == 1 && size <= carParkingSpots) {
-            cars.add(vehicle);
-            carParkingSpots -= 1;
-            result = true;
-        } else if (size > 1 && size <= truckParkingSpots) {
+        if (size > 1 && truckParkingSpots > 0) {
             trucks.add(vehicle);
-            truckParkingSpots -= size;
+            truckParkingSpots -= 1;
             result = true;
-        } else if (size > truckParkingSpots
-                    && size <= truckParkingSpots + carParkingSpots) {
-            int truckSpotsOccupied = size - truckParkingSpots;
-            int carSpotsOccupied = size - carParkingSpots;
-            truckParkingSpots -= truckSpotsOccupied;
-            carParkingSpots -= carSpotsOccupied;
+        } else if (size <= carParkingSpots) {
+            cars.add(vehicle);
+            carParkingSpots -= size;
             result = true;
         }
         return result;

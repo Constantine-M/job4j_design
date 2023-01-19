@@ -14,13 +14,6 @@ package ru.job4j.ood.lsp.parking;
  */
 public class Car extends Transport {
 
-    private static final int SPACE_SIZE = 1;
-
-    public Car(String model, int size) {
-        super(model, size);
-        setSize(SPACE_SIZE);
-    }
-
     public Car(String model) {
         super(model);
     }

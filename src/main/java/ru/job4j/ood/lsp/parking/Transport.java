@@ -12,9 +12,11 @@ package ru.job4j.ood.lsp.parking;
  */
 public abstract class Transport {
 
+    public final static int DEFAULT_SIZE = 1;
+
     private String model;
 
-    private int size = 1;
+    private int size = DEFAULT_SIZE;
 
     public Transport(String model, int size) {
         this.model = model;
@@ -25,19 +27,7 @@ public abstract class Transport {
         this.model = model;
     }
 
-    public String getModel() {
-        return model;
-    }
-
     public int getSize() {
         return size;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
     }
 }
