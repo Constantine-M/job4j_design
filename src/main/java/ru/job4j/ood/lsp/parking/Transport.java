@@ -12,11 +12,14 @@ package ru.job4j.ood.lsp.parking;
  */
 public abstract class Transport {
 
-    public final static int DEFAULT_SIZE = 1;
-
     private String model;
 
-    private int size = DEFAULT_SIZE;
+    /**
+     * Значение размера авто по
+     * умолчанию будет = размеру
+     * легового авто.
+     */
+    private int size = Car.SIZE;
 
     public Transport(String model, int size) {
         this.model = model;

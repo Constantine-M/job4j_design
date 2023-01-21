@@ -10,7 +10,7 @@ public class Truck extends Transport {
 
     public Truck(String model, int size) {
         super(model, size);
-        if (size <= DEFAULT_SIZE) {
+        if (size <= Car.SIZE) {
             throw new IllegalArgumentException("Truck size must be > 1");
         }
     }
