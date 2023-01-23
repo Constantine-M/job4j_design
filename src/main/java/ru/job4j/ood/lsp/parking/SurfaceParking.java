@@ -48,7 +48,7 @@ public class SurfaceParking implements Parking {
     public boolean park(Transport vehicle) {
         boolean result = false;
         int size = vehicle.getSize();
-        if (size > 1 && truckParkingSpots > 0) {
+        if (size > Car.SIZE && truckParkingSpots > 0) {
             trucks.add(vehicle);
             truckParkingSpots -= 1;
             result = true;
