@@ -54,7 +54,7 @@ public class SurfaceParking implements Parking {
             result = true;
         } else if (size <= carParkingSpots) {
             cars.add(vehicle);
-            carParkingSpots -= size;
+            carParkingSpots -= Car.SIZE;
             result = true;
         }
         return result;
