@@ -50,11 +50,11 @@ public class SurfaceParking implements Parking {
         int size = vehicle.getSize();
         if (size > Car.SIZE && truckParkingSpots > 0) {
             trucks.add(vehicle);
-            truckParkingSpots -= 1;
+            truckParkingSpots -= Car.SIZE;
             result = true;
         } else if (size <= carParkingSpots) {
             cars.add(vehicle);
-            carParkingSpots -= Car.SIZE;
+            carParkingSpots -= size;
             result = true;
         }
         return result;
