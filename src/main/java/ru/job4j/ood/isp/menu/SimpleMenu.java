@@ -1,5 +1,6 @@
 package ru.job4j.ood.isp.menu;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 /**
@@ -13,24 +14,58 @@ public class SimpleMenu implements Menu {
      * Данный метод добавляет в меню
      * новый пункт.
      *
-     * Пока что непонятно, зачем здесь
-     * родитель и ребенок. Нужно ведь добавить
-     * одного. У пункта меню только одно имя...
-     * Но ведь нужно еще сделать подменю...
+     * Когда мы добавляем, то все таки нужно
+     * знать и родителя, и потомка,
+     * потому что от этого зависит, что
+     * будет добавлено и куда.
      *
-     * @param parentName
-     * @param childName
-     * @param actionDelegate
-     * @return
+     * Есть вариации:
+     * - потомок без родителя не может
+     * существовать, а значит, если уже есть
+     * потомок, то ничего не будет добавлено;
+     * - только родитель (и он будет добавлен
+     * сразу в корень);
+     * - родитель и потомок, при этом сначала
+     * родитель будет добавлен, а потом потомок;
+     * 1.Проверяем наличие потомка. Если он есть,
+     * то ничего не добавляем.
+     * 2.Проверяем, что потенциально добавляемого
+     * родителя нет в списке рутов. Если нет, то
+     * добавляем.
+     * 3.Проверяем, что родитель есть, чтобы
+     * добавить потомка, которого мы передали
+     * в метод.
+     *
+     * @param parentName корневой пункт меню.
+     * @param childName подпункт меню (потомок).
+     * @param actionDelegate действие с пунктом меню.
+     * @return true, если пункт меню был добавлен.
      */
     @Override
     public boolean add(String parentName, String childName, ActionDelegate actionDelegate) {
-        boolean rsl = false;
-        return rsl;
+        MenuItem parentItem = new SimpleMenuItem(parentName, actionDelegate);
+        MenuItem childItem = new SimpleMenuItem(childName, actionDelegate);
+        if (findItem(childName).isPresent()) {
+            return false;
+        }
+        if (Objects.equals(parentName, Menu.ROOT)) {
+            rootElements.add(childItem);
+        } else if (!hasElementInRootList(parentName)) {
+            rootElements.add(parentItem);
+        }
+        if (findItem(parentName).isPresent()) {
+            rootElements.add(childItem);
+            getMenuItemByName(parentName).get().getChildren().add(childItem);
+        }
+        return true;
     }
 
     @Override
     public Optional<MenuItemInfo> select(String itemName) {
+        Optional<ItemInfo> itemInfo = findItem(itemName);
+        if (itemInfo.isPresent()) {
+            return Optional.of(new MenuItemInfo(itemInfo.get().menuItem, itemInfo.get().number));
+        }
         return Optional.empty();
     }
 
@@ -42,6 +77,7 @@ public class SimpleMenu implements Menu {
     /**
      * Данный метод находит меню и его
      * номер по названию пункта меню.
+     * Будет возвращено первое совпадение.
      *
      * Объявление итератора - это наверное нехорошо...
      * @param name имя пункта, который ищем.
@@ -54,9 +90,48 @@ public class SimpleMenu implements Menu {
             ItemInfo el = dfsIterator.next();
             if (el.getMenuItem().getName().equals(name)) {
                 rsl = Optional.of(el);
+                break;
             }
         }
         return rsl;
+    }
+
+    /**
+     * Данный метод проходится по списку всех
+     * пунктов меню и проверяет, есть ли
+     * там пункт с названием, который мы передали
+     * в метод.
+     * Так я пытаюсь избежать использования
+     * equals & hashcode, которого на мой
+     * взгляд здесь быть не должно.
+     * @param element название пункта меню.
+     * @return true, если такой пункт уже есть.
+     */
+    private boolean hasElementInRootList(String element) {
+        for (MenuItem item : rootElements) {
+            if (item.getName().equals(element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Данный метод находит объект
+     * пункта меню {@link MenuItem}
+     * по имени пункта.
+     * Через {@link Optional} быстрее и
+     * безопаснее, но вторым я в
+     * {@link SimpleMenu#add} пренебрег,
+     * потому что уверен, что нужный
+     * элемент в списке есть.
+     * @param name имя пункта меню.
+     * @return пункт меню.
+     */
+    private Optional<MenuItem> getMenuItemByName(String name) {
+        return rootElements.stream()
+                .filter(item -> item.getName().equals(name))
+                .findFirst();
     }
 
     /**
@@ -87,6 +162,42 @@ public class SimpleMenu implements Menu {
         @Override
         public ActionDelegate getActionDelegate() {
             return actionDelegate;
+        }
+
+
+        /**
+         * В каркасе не было equals & hashcode.
+         * Я специально добавил их, чтобы
+         * можно было проверять наличие
+         * parent в списке rootElements,
+         * в методе {@link SimpleMenu#add}.
+         * Это было так:
+         * rootElements.contains(parentItem).
+         * Считаю это костылем, потому что
+         * equals & hashcode определен в
+         * {@link Menu}.
+         * Чуть позже я написал по-другому,
+         * пришлось написать метод
+         * {@link SimpleMenu#hasElementInRootList}.
+         */
+        @Override
+        public boolean equals(Object o) {
+            boolean result;
+            if (this == o) {
+                result = true;
+            } else if (!(o instanceof SimpleMenuItem that)) {
+                result = false;
+            } else {
+                result = Objects.equals(name, that.name)
+                        && Objects.equals(children, that.children)
+                        && Objects.equals(actionDelegate, that.actionDelegate);
+            }
+            return result;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, children, actionDelegate);
         }
     }
 
