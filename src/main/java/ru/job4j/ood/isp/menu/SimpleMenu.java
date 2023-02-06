@@ -1,6 +1,5 @@
 package ru.job4j.ood.isp.menu;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 
 /**
@@ -45,33 +44,52 @@ public class SimpleMenu implements Menu {
     public boolean add(String parentName, String childName, ActionDelegate actionDelegate) {
         MenuItem parentItem = new SimpleMenuItem(parentName, actionDelegate);
         MenuItem childItem = new SimpleMenuItem(childName, actionDelegate);
+        Optional<ItemInfo> optItemInfo = findItem(parentName);
         if (findItem(childName).isPresent()) {
             return false;
         }
         if (Objects.equals(parentName, Menu.ROOT)) {
             rootElements.add(childItem);
-        } else if (!hasElementInRootList(parentName)) {
+        } else if (optItemInfo.isEmpty()) {
             rootElements.add(parentItem);
-        }
-        if (findItem(parentName).isPresent()) {
-            rootElements.add(childItem);
-            getMenuItemByName(parentName).get().getChildren().add(childItem);
+        } else {
+            optItemInfo.get()
+                    .getMenuItem()
+                    .getChildren()
+                    .add(childItem);
         }
         return true;
     }
 
+    /**
+     * Данный метод находит объект
+     * {@link MenuItemInfo} по имени
+     * пункта меню.
+     * @param itemName наименование пункта меню.
+     * @return {@link Optional<MenuItemInfo>}.
+     */
     @Override
     public Optional<MenuItemInfo> select(String itemName) {
         Optional<ItemInfo> itemInfo = findItem(itemName);
-        if (itemInfo.isPresent()) {
-            return Optional.of(new MenuItemInfo(itemInfo.get().menuItem, itemInfo.get().number));
-        }
-        return Optional.empty();
+        return itemInfo.map(info -> new MenuItemInfo(info.menuItem, info.number));
     }
 
     @Override
     public Iterator<MenuItemInfo> iterator() {
-        return null;
+        return new Iterator<MenuItemInfo>() {
+
+            private final DFSIterator dfsIterator = new DFSIterator();
+            @Override
+            public boolean hasNext() {
+                return dfsIterator.hasNext();
+            }
+
+            @Override
+            public MenuItemInfo next() {
+                ItemInfo itemInfo = dfsIterator.next();
+                return new MenuItemInfo(itemInfo.getMenuItem(), itemInfo.getNumber());
+            }
+        };
     }
 
     /**
@@ -94,44 +112,6 @@ public class SimpleMenu implements Menu {
             }
         }
         return rsl;
-    }
-
-    /**
-     * Данный метод проходится по списку всех
-     * пунктов меню и проверяет, есть ли
-     * там пункт с названием, который мы передали
-     * в метод.
-     * Так я пытаюсь избежать использования
-     * equals & hashcode, которого на мой
-     * взгляд здесь быть не должно.
-     * @param element название пункта меню.
-     * @return true, если такой пункт уже есть.
-     */
-    private boolean hasElementInRootList(String element) {
-        for (MenuItem item : rootElements) {
-            if (item.getName().equals(element)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Данный метод находит объект
-     * пункта меню {@link MenuItem}
-     * по имени пункта.
-     * Через {@link Optional} быстрее и
-     * безопаснее, но вторым я в
-     * {@link SimpleMenu#add} пренебрег,
-     * потому что уверен, что нужный
-     * элемент в списке есть.
-     * @param name имя пункта меню.
-     * @return пункт меню.
-     */
-    private Optional<MenuItem> getMenuItemByName(String name) {
-        return rootElements.stream()
-                .filter(item -> item.getName().equals(name))
-                .findFirst();
     }
 
     /**
@@ -162,42 +142,6 @@ public class SimpleMenu implements Menu {
         @Override
         public ActionDelegate getActionDelegate() {
             return actionDelegate;
-        }
-
-
-        /**
-         * В каркасе не было equals & hashcode.
-         * Я специально добавил их, чтобы
-         * можно было проверять наличие
-         * parent в списке rootElements,
-         * в методе {@link SimpleMenu#add}.
-         * Это было так:
-         * rootElements.contains(parentItem).
-         * Считаю это костылем, потому что
-         * equals & hashcode определен в
-         * {@link Menu}.
-         * Чуть позже я написал по-другому,
-         * пришлось написать метод
-         * {@link SimpleMenu#hasElementInRootList}.
-         */
-        @Override
-        public boolean equals(Object o) {
-            boolean result;
-            if (this == o) {
-                result = true;
-            } else if (!(o instanceof SimpleMenuItem that)) {
-                result = false;
-            } else {
-                result = Objects.equals(name, that.name)
-                        && Objects.equals(children, that.children)
-                        && Objects.equals(actionDelegate, that.actionDelegate);
-            }
-            return result;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, children, actionDelegate);
         }
     }
 
@@ -269,6 +213,11 @@ public class SimpleMenu implements Menu {
      * пункта (1.1., 1.1.1. и т.д.).
      * Здесь я добавил геттеры, чтобы
      * использовать их в {@link SimpleMenu#findItem}.
+     * ItemInfo - это как {@link MenuItemInfo},
+     * но для реализации класса {@link SimpleMenu}.
+     * То есть, это такая же прослойка
+     * между {@link SimpleMenu} и
+     * {@link SimpleMenuItem}.
      */
     private class ItemInfo {
 
