@@ -1,14 +1,18 @@
 package ru.job4j.ood.isp.menu;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.*;
 
 class SimpleMenuTest {
 
+    /**
+     * Данное действие над пунктом меню
+     * является своеобразной заглушкой.
+     */
     public static final ActionDelegate STUB_ACTION = System.out::println;
 
     @Test
@@ -50,17 +54,36 @@ class SimpleMenuTest {
                 .isEqualTo(menu.select("Study SOLID block").get());
     }
 
-    @Disabled
+    /**
+     * Сам по себе Consumer ничего не
+     * возвращает, но мы туда можем
+     * что-нибудь подложить и использовать это.
+     * Например, заранее создали {@link StringBuilder},
+     * поместили его в {@link Consumer},
+     * заполнили {@link StringBuilder}
+     * и сравнили с тем, который прописали сами
+     * (тот, который ожидали).
+     */
     @Test
     public void whenPrintMenuWithIndention() {
+        StringBuilder actualBuilder = new StringBuilder();
         Menu menu = new SimpleMenu();
-        MenuPrinter printer = new ConsoleMenuPrinter();
+        MenuPrinter printer = new ConsoleMenuPrinter(actualBuilder::append);
         menu.add(Menu.ROOT, "Go to work", STUB_ACTION);
         menu.add("Go to work", "Coffee break", STUB_ACTION);
         menu.add("Go to work", "Work hard!", STUB_ACTION);
         menu.add("Work hard!", "Argue with the initiator", STUB_ACTION);
         menu.add("Work hard!", "Offer my own solution", STUB_ACTION);
         menu.add(Menu.ROOT, "Go home and learn Java", STUB_ACTION);
+        StringBuilder expectedBuilder = new StringBuilder();
+        String ls = System.lineSeparator();
+        expectedBuilder.append("--1.Go to work").append(ls)
+                .append("----1.1.Coffee break").append(ls)
+                .append("----1.2.Work hard!").append(ls)
+                .append("------1.2.1.Argue with the initiator").append(ls)
+                .append("------1.2.2.Offer my own solution").append(ls)
+                .append("--2.Go home and learn Java").append(ls);
         printer.print(menu);
+        assertThat(actualBuilder.toString()).isEqualTo(expectedBuilder.toString());
     }
 }
