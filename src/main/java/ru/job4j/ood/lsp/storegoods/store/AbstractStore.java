@@ -40,6 +40,11 @@ public abstract class AbstractStore implements Store {
         return listFood.stream().filter(filter).toList();
     }
 
+    @Override
+    public void clear() {
+        listFood.clear();
+    }
+
     /**
      * Данный метод делает проверку
      * срока годности.

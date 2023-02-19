@@ -18,4 +18,6 @@ public interface Store {
     boolean delete(Food food);
 
     List<Food> findAll(Predicate<Food> predicate);
+
+    void clear();
 }
